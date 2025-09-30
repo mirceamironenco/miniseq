@@ -18,7 +18,8 @@ bash run_countdown_qwen2.5-3b.sh torchrun --nproc-per-node=2 --
 
 We compare the effect of different data packing strategies and attention implementation choices:
 
-<img width="949" height="663" alt="Screenshot 2025-09-28 at 17 43 18" src="https://github.com/user-attachments/assets/95620973-70a6-48ab-9d22-0c146ec69313" />
+<img width="949" height="663" alt="image" src="https://github.com/user-attachments/assets/032d1b68-0f95-410c-8507-08a93a69bb9c" />
+
 
 The above plots  can be reproduced with the following comands (full wandb logs [here](https://wandb.ai/mirceam/miniseq_rl)):
 
