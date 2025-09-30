@@ -23,12 +23,12 @@ dependencies = [
     "pylatexenc", # math task eval
     "math-verify[antlr4_13_2]",
     "torchao",
+    "vllm==0.10.2",
 ]
 
 [project.optional-dependencies]
 vllm = [
     "flashinfer-python",
-    "vllm",
 ]
 
 [project.scripts]
