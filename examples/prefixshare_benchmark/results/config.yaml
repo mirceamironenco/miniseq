@@ -1,0 +1,25 @@
+!!python/object:__main__.BenchmarkConfig
+ac: true
+batch_size: 3
+cache_dir: !!python/object/apply:pathlib.PosixPath
+- local_data
+compile: !!python/object:minitune.configs._training.CompileConfig
+  dynamic: false
+  fullgraph: false
+  loss: false
+  model: true
+  optimizer_step: false
+method: nll
+model: !!python/object:minitune.configs._training.ModelLoadConfig
+  dtype: !torch.dtype 'bfloat16'
+  finetune_repo_id: null
+  flex_attention: true
+  load_on_cpu: true
+  name: qwen2.5-7b-instruct
+  use_cce: true
+num_completions: 2
+result_file: nll_2_qwen7b.csv
+seed: 2
+seq_range: !!python/tuple
+- 7
+- 15

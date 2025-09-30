@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "miniseq"
+version = "0.1.0"
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [{name = "mirceamironenco", email = "mircea.mironenco@gmail.com"}]
+license = { file = "LICENSE" }
+dependencies = [
+    "torchdata @ git+https://github.com/pytorch/data.git",
+    "cut-cross-entropy @ git+https://github.com/apple/ml-cross-entropy.git",
+    "torcheval",
+    "huggingface_hub",
+    "datasets>=4.0.0",
+    "tyro>=0.9.32",
+    "rich",
+    "typing-extensions>=4.14.0",
+    "safetensors",
+    "transformers",
+    "pylatexenc", # math task eval
+    "math-verify[antlr4_13_2]",
+    "torchao",
+]
+
+[project.optional-dependencies]
+vllm = [
+    "flashinfer-python",
+    "vllm",
+]
+
+[project.scripts]
+miniseq_recipe = "miniseq.entry:main"
+
+[tool.setuptools.packages.find]
+include = ["miniseq*"]
