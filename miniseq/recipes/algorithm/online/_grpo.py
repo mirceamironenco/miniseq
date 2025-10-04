@@ -229,7 +229,7 @@ class GRPOUnit(OnlineTrainUnit):
             prefix_sharing=self._prefix_sharing,
         )
 
-    @torch.compile(dynamic=True)
+    # @torch.compile(dynamic=True)
     def _packed_grpo_loss_broadcast(
         self,
         advantage: torch.Tensor,

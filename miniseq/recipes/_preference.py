@@ -5,6 +5,7 @@ import torch
 import torch.nn as nn
 
 from miniseq import configs as cfg
+from miniseq import register_models
 from miniseq.data import PreferenceBatch, load_hf_pretrained_tokenzier, log_tokenizer
 from miniseq.logging import get_logger, log_config, setup_logging
 from miniseq.machine import Machine, setup_default_machine
@@ -108,6 +109,8 @@ class PreferenceRecipeConfig(cfg.TrainRecipeConfig):
 def create_preference_trainer(
     config: PreferenceRecipeConfig, log: logging.Logger | None = None
 ) -> Trainer[PreferenceBatch, PreferenceBatch]:
+    register_models()
+
     if log is None:
         setup_logging(debug=False)
 

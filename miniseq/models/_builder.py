@@ -3,7 +3,13 @@ from types import MethodType
 import torch
 
 from miniseq.models._registry import ModelConfig
-from miniseq.nn import Embedding, Linear, Module, TiedProjectionLayer
+from miniseq.nn import (
+    Embedding,
+    Linear,
+    Module,
+    TiedProjectionLayer,
+    cross_entropy_loss,
+)
 from miniseq.transformer import (
     TransformerDecoder,
     TransformerDecoderLayer,
@@ -33,12 +39,18 @@ class TransformerBuilder:
                 self.config.model_dim, self.config.vocab_size, bias=False
             )
 
+        loss_func = cross_entropy_loss
+
+        if not self.config.cut_cross_entropy:
+            loss_func = torch.compile(loss_func, dynamic=True)
+
         model = TransformerDecoderModel(
             frontend,
             decoder,
             final_proj,
             max_seq_len=self.config.max_seq_len,
             pad_idx=self.config.pad_idx,
+            loss_function=loss_func,
         )
 
         if self.config.cut_cross_entropy:

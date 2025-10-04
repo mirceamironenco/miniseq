@@ -1,15 +1,16 @@
+from __future__ import annotations
+
 import logging
 import os
 import typing
 from contextlib import AbstractContextManager, nullcontext
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
-from typing import Callable, cast
+from typing import TYPE_CHECKING, Callable, cast
 
 import torch
 import torch.nn as nn
 from torch.distributed.tensor import DTensor
-
 from typing_extensions import override
 
 import miniseq.training.data_parallel as data_parallel
@@ -27,13 +28,10 @@ from miniseq.training import StopWatch, manual_seed, maybe_unwrap_ac_checkpoint
 
 # Silence vLLM import logging.
 logging.disable(logging.WARNING)
-from vllm import (  # noqa: E402
-    LLM,
-    LLMEngine,
-    RequestOutput,
-    SamplingParams,
-    TokensPrompt,
-)
+
+# Lazy import since vllm has significant import time.
+if TYPE_CHECKING:
+    from vllm import LLM, LLMEngine, RequestOutput, SamplingParams
 
 logging.disable(logging.NOTSET)
 
@@ -157,6 +155,9 @@ class VLLMGenerator(Generator):
         if config.tensor_parallel_size is None:
             config.tensor_parallel_size = 1
 
+        # Lazy import since vllm has significant import time.
+        from vllm import LLM, SamplingParams
+
         # Build vLLM engine.
         self._llm = LLM(
             model=model_path,
@@ -259,9 +260,8 @@ class VLLMGenerator(Generator):
             else:
                 sampling_params = self._sampling_params
 
-            token_prompts: list[TokensPrompt] = [
-                {"prompt_token_ids": tokens} for tokens in all_prompts
-            ]
+            # list[TokensPrompt]
+            token_prompts = [{"prompt_token_ids": tokens} for tokens in all_prompts]
 
             self._machine.barrier()
 

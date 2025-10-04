@@ -174,8 +174,11 @@ class PretrainedModelConfig:
     finetune_repo_id: str | None = None
 
     def __post_init__(self) -> None:
-        if not model_is_registered(self.name):
-            raise ValueError(f"Model with name {self.name} is not registered.")
+        # Note: Do not check that specified model is registered here.
+        # To allow for lazy registration of models.
+
+        # if not model_is_registered(self.name):
+        #     raise ValueError(f"Model with name {self.name} is not registered.")
 
         if self.flex_attention and self.flash_attention2:
             raise ValueError("Cannot have both flex and flash attention2 enabled.")

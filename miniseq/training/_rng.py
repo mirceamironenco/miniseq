@@ -55,6 +55,9 @@ def manual_seed(seed: int, *devices: torch.device) -> Iterator[None]:
 
         g.manual_seed(seed)
 
+    random_state = random.getstate()
+    np_state = np.random.get_state()
+
     random.seed(seed)
     np.random.seed(seed)
 
@@ -63,6 +66,9 @@ def manual_seed(seed: int, *devices: torch.device) -> Iterator[None]:
     finally:
         for generator, original_state in zip(generators, states):
             generator.set_state(original_state)
+
+        random.setstate(random_state)
+        np.random.set_state(np_state)
 
 
 @contextmanager

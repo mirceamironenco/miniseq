@@ -1,18 +1,21 @@
+from __future__ import annotations
+
 import logging
 from collections.abc import Mapping, Sequence
 from pathlib import Path
 from types import NoneType
-from typing import Any, Callable, Literal, Protocol, TypedDict, overload
+from typing import TYPE_CHECKING, Any, Callable, Literal, Protocol, TypedDict, overload
 
 import numpy as np
 import torch
-from transformers import AutoTokenizer  # type: ignore
-from transformers.tokenization_utils_base import (
-    AddedToken,  # type: ignore
-    BatchEncoding,
-    TruncationStrategy,
-)
-from transformers.utils.generic import PaddingStrategy, TensorType
+
+if TYPE_CHECKING:
+    from transformers.tokenization_utils_base import (
+        AddedToken,  # type: ignore
+        BatchEncoding,
+        TruncationStrategy,
+    )
+    from transformers.utils.generic import PaddingStrategy, TensorType
 
 
 class Message(TypedDict):
@@ -631,6 +634,9 @@ def load_hf_pretrained_tokenzier(
     set_none_pad_token_to_eos: bool = True,
 ) -> PretrainedHFTokenizer:
     """Simplified equivalent to AutoTokenizer.from_pretrained(...) with type hints."""
+
+    # Lazy-load since this has significant import time
+    from transformers import AutoTokenizer  # type: ignore
 
     tokenizer = AutoTokenizer.from_pretrained(
         model_repo_id,

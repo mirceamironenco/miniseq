@@ -3,19 +3,20 @@ from __future__ import annotations
 import dataclasses
 from typing import Annotated
 
-import torch
 import tyro
 
 from miniseq.cli import constructor_registry
-from miniseq.configs import PretrainedModelConfig
-from miniseq.models import all_registered_models, model_is_registered
-from miniseq.utils import make_dtype
 
 
 @constructor_registry.primitive_rule
 def _torch_dtype_rule(
     type_info: tyro.constructors.PrimitiveTypeInfo,
 ) -> tyro.constructors.PrimitiveConstructorSpec | None:
+    # Potentially expensive imports done lazily to not clog CLI
+    import torch
+
+    from miniseq.utils import make_dtype
+
     if type_info.type != torch.dtype:
         return None
 
@@ -35,15 +36,15 @@ CLIModelName = Annotated[
     str,
     tyro.conf.arg(
         help_behavior_hint=lambda df: f"(default: {df}, run entry.py model_registry)",
-        metavar="{" + ",".join(all_registered_models()[:3]) + ",...}",
+        # metavar="{" + ",".join(all_registered_models()[:3]) + ",...}",
+        metavar="{qwen2.5-3b-instruct,qwen2.5-0.5b,qwen3-1.7b,...}",
         constructor_factory=lambda: Annotated[  # type: ignore
             str,
             tyro.constructors.PrimitiveConstructorSpec(
                 nargs=1,
                 metavar="",
                 instance_from_str=lambda args: args[0],
-                is_instance=lambda instance: isinstance(instance, str)
-                and model_is_registered(instance),
+                is_instance=lambda instance: isinstance(instance, str),
                 str_from_instance=lambda instance: [instance],
                 # Does not work with constructor_factory returning PrimitiveSpec
                 # choices=tuple(all_registered_models()),
@@ -57,6 +58,11 @@ CLIModelName = Annotated[
 def _model_options_rule(
     type_info: tyro.constructors.StructTypeInfo,
 ) -> tyro.constructors.StructConstructorSpec | None:
+    # Potentially expensive imports done lazily to not clog CLI
+    import torch
+
+    from miniseq.configs import PretrainedModelConfig
+
     if type_info.type != PretrainedModelConfig:
         return None
 

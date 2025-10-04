@@ -5,6 +5,7 @@ from dataclasses import dataclass
 import torch
 
 from miniseq import configs as cfg
+from miniseq import register_models
 from miniseq.data import SequenceBatch, load_hf_pretrained_tokenzier, log_tokenizer
 from miniseq.generation import Generator
 from miniseq.logging import get_logger, log_config, setup_logging
@@ -110,6 +111,8 @@ class SFTRecipeConfig(cfg.TrainRecipeConfig):
 def create_finetune_trainer(
     config: SFTRecipeConfig, log: logging.Logger | None = None
 ) -> Trainer[SequenceBatch, SequenceBatch]:
+    register_models()
+
     if log is None:
         setup_logging(debug=False)
 
