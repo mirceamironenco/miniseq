@@ -5,7 +5,6 @@ from torch.nn.functional import log_softmax
 from torch.nn.functional import nll_loss as torch_nll_loss
 
 
-@torch.compile(dynamic=True)
 def cross_entropy_loss(
     logits: torch.Tensor,
     targets: torch.Tensor,

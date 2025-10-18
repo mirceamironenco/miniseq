@@ -5,7 +5,6 @@ from logging import DEBUG, INFO, Formatter, Handler, NullHandler, getLogger
 from typing import Final
 
 import rich
-import torch
 from rich.console import Console
 from rich.logging import RichHandler
 from rich.pretty import pretty_repr
@@ -137,6 +136,10 @@ _UNITS: Final = ["B", "KiB", "MiB", "GiB", "TiB", "PiB"]
 
 def format_as_byte_size(value: object) -> str:
     """Format metric ``value`` in byte units."""
+
+    # Lazy import for torch to avoid clogging logging utility.
+    import torch
+
     if isinstance(value, float):
         size = value
     elif isinstance(value, (str, torch.Tensor, int)):

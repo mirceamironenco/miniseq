@@ -79,7 +79,7 @@ def model_sequence_logps(
     return logprobs, avg_logprobs
 
 
-@torch.compile(dynamic=True)
+# @torch.compile(dynamic=True)
 def packed_scatter_sum_reduce(
     input: torch.Tensor, *, document_ids: torch.Tensor, num_sequences: int
 ) -> torch.Tensor:
@@ -121,7 +121,7 @@ def prefix_packed_scatter_sum_reduce(
     return result
 
 
-@torch.compile(dynamic=True)
+# @torch.compile(dynamic=True)
 def packed_segment_sum_reduce(
     input: torch.Tensor, *, seq_lens: torch.Tensor
 ) -> torch.Tensor:

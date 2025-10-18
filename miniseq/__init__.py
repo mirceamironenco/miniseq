@@ -58,7 +58,3 @@ def setup_vllm() -> None:
 
 
 setup_vllm()
-register_models()
-
-# isort: split
-import miniseq.cli

@@ -14,16 +14,17 @@ from typing import (
     overload,
 )
 
-from datasets import Dataset, DatasetDict, load_dataset
 from rich.pretty import pretty_repr
 
 HFItemT = TypeVar("HFItemT", bound=Mapping)
 
 
-class HFDataset(Dataset, Generic[HFItemT]):
-    """At runtime, this class is a no-op, but helps with type info preservation."""
+if TYPE_CHECKING:
+    from datasets import Dataset
 
-    if TYPE_CHECKING:
+    class HFDataset(Dataset, Generic[HFItemT]):
+        """At runtime, this class is a no-op, but helps with type info preservation."""
+
         # fmt: off
         @overload
         def __getitem__(self, key: int | slice | Iterable[int]) -> HFItemT: ...
@@ -44,6 +45,10 @@ class HFDataset(Dataset, Generic[HFItemT]):
             writer_batch_size: int | None = 1000,
             new_fingerprint: str | None = None,
         ) -> HFDataset[HFItemT]: ...
+else:
+    # HFDataset is not used at runtime, yet we still need a subscriptable type
+    # for typing.cast(HFDataset[...], dataset_obj)
+    HFDataset = list
 
 
 OutT = TypeVar("OutT", bound=Mapping)
@@ -142,6 +147,9 @@ def load_hf_map_dataset(
         raise ValueError(
             "Either `test_split` is provided or test_split_ratio > 0.0, but not both."
         )
+
+    # Lazy-load since this has significant import time
+    from datasets import Dataset, DatasetDict, load_dataset
 
     if Path(path).is_dir():
         dataset = Dataset.load_from_disk(path)

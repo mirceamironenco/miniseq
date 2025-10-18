@@ -10,29 +10,63 @@ requires-python = ">=3.11"
 authors = [{name = "mirceamironenco", email = "mircea.mironenco@gmail.com"}]
 license = { file = "LICENSE" }
 dependencies = [
-    "torchdata @ git+https://github.com/pytorch/data.git",
-    "cut-cross-entropy @ git+https://github.com/apple/ml-cross-entropy.git",
-    "torcheval",
-    "huggingface_hub",
+    "torchdata @ git+https://github.com/pytorch/data.git@92950795e0790eb74df995daf40b658e85fd2c9f",
+    "cut-cross-entropy @ git+https://github.com/apple/ml-cross-entropy.git@b7a02791b234e187b524fb1dba6a812d521b203a",
+    "torcheval~=0.0.6",
+    "huggingface_hub~=0.35",
     "datasets>=4.0.0",
-    "tyro>=0.9.32",
-    "rich",
+    "tyro>=0.9.34",
+    "rich>=14.0.0",
     "typing-extensions>=4.14.0",
-    "safetensors",
-    "transformers",
+    "safetensors~=0.6",
+    "transformers~=4.56.0",
     "pylatexenc", # math task eval
     "math-verify[antlr4_13_2]",
-    "torchao",
-    "vllm==0.10.2",
+    "torchao==0.13.0",
+
+    "vllm==0.11.0; sys_platform != 'darwin' or platform_machine != 'x86_64'",
+
+    # Torch rules:
+    # - Skip on macOS Intel (can still be used via conda-forge)
+    # - Allow 2.8.x so Linux/Windows can pick 2.8.0+cu128 and macOS can pick 2.8.0
+    "torch>=2.8,<2.9; sys_platform != 'darwin' or platform_machine != 'x86_64'",
 ]
 
 [project.optional-dependencies]
-vllm = [
-    "flashinfer-python",
-]
+flash-attn   = ["flash-attn>=2.8.3; sys_platform == 'linux' and platform_machine == 'x86_64'"]
+flash-infer  = ["flashinfer-python; sys_platform == 'linux' and platform_machine == 'x86_64'"]
+
 
 [project.scripts]
 miniseq_recipe = "miniseq.entry:main"
+
+[tool.uv]
+no-build-isolation-package = ["flash-attn"]
+prerelease = "allow"
+environments = [
+  "sys_platform == 'linux'",
+  "sys_platform == 'win32'",
+  "sys_platform == 'darwin' and platform_machine == 'arm64'",
+]
+
+# Use CUDA index only on Linux/Windows; macOS falls back to PyPI.
+[tool.uv.sources]
+torch = [
+  { index = "pytorch-cu128", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+  { index = "pytorch-cpu",   marker = "sys_platform == 'darwin'" },
+]
+
+
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
 
 [tool.setuptools.packages.find]
 include = ["miniseq*"]

@@ -1,11 +1,12 @@
 import logging
+import re
 from collections.abc import Iterable
 from dataclasses import dataclass, field
 
 import torch
-import re
 
 from miniseq import configs as cfg
+from miniseq import register_models
 from miniseq.data import (
     PromptBatch,
     TrajectoryBatch,
@@ -202,6 +203,8 @@ def build_models(
 def create_online_trainer(
     config: OnlineRecipeConfig, log: logging.Logger | None = None
 ) -> Trainer[TrajectoryBatch, PromptBatch]:
+    register_models()
+
     if log is None:
         setup_logging(debug=False)
 

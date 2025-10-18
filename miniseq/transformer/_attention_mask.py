@@ -89,14 +89,6 @@ def _custom_create_mask(
 
 build_dense_mask_from_mod = _custom_create_mask
 
-if should_compile_flex():
-    build_dense_mask_from_mod = torch.compile(_custom_create_mask, dynamic=True)
-    build_block_mask_from_dense = torch.compile(
-        build_block_mask_from_dense, dynamic=True
-    )
-
-    create_block_mask = torch.compile(create_block_mask, fullgraph=True)
-
 
 def causal_mask_mod(
     batch: torch.Tensor,
@@ -144,6 +136,8 @@ class AttentionMask:
     padded: bool
     packed: bool
 
+    _flex_compiled: bool = False
+
     def __init__(
         self,
         *,
@@ -163,6 +157,8 @@ class AttentionMask:
         packed: bool = False,
         window_size: int | None = None,
     ) -> None:
+        self.compile_mask_builders()
+
         self.mask_mod = mask_mod
         self._bsz = batch_size or 1
         self._num_heads = num_heads or 1
@@ -213,6 +209,27 @@ class AttentionMask:
                 self.device,  # type: ignore
                 BLOCK_SIZE=self.block_sizes,
             )
+
+    @classmethod
+    def compile_mask_builders(cls) -> None:
+        if not should_compile_flex():
+            return
+
+        if cls._flex_compiled:
+            return
+
+        global build_dense_mask_from_mod
+        global build_block_mask_from_dense
+        global create_block_mask
+
+        build_dense_mask_from_mod = torch.compile(_custom_create_mask, dynamic=True)
+        build_block_mask_from_dense = torch.compile(
+            build_block_mask_from_dense, dynamic=True
+        )
+
+        create_block_mask = torch.compile(create_block_mask, fullgraph=True)
+
+        cls._flex_compiled = True
 
     @classmethod
     def build_causal(

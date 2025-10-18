@@ -4,6 +4,7 @@ from dataclasses import dataclass, field
 import torch
 
 from miniseq import configs as cfg
+from miniseq import register_models
 from miniseq.data import load_hf_pretrained_tokenzier, log_tokenizer
 from miniseq.evaluator import Evaluator, build_evaluator
 from miniseq.generation import VLLMEngineConfig, VLLMSamplingConfig
@@ -45,6 +46,8 @@ class EvalRecipeConfig(cfg.EvalRecipeConfig):
 def create_evaluator(
     config: EvalRecipeConfig, log: logging.Logger | None = None
 ) -> Evaluator:
+    register_models()
+
     if log is None:
         setup_logging(debug=False)
 

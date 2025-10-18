@@ -1,5 +1,6 @@
 import collections
 import itertools
+import os
 import sys
 from typing import Annotated
 
@@ -7,67 +8,77 @@ import tyro
 from rich.table import Table
 
 from miniseq import cli
-from miniseq.configs import save_config
 from miniseq.logging import get_console
-from miniseq.models import (
-    all_registered_models,
-    get_model_family,
-)
-from miniseq.recipes import (
-    EvalRecipeConfig,
-    OnlineRecipeConfig,
-    PreferenceRecipeConfig,
-    SFTRecipeConfig,
-    create_evaluator,
-    create_finetune_trainer,
-    create_online_trainer,
-    create_preference_trainer,
-)
-from miniseq.utils import get_local_rank
 
 
-def online(config: Annotated[OnlineRecipeConfig, tyro.conf.arg(name="")]) -> None:
+def _online():
     """Run standard online training recipe."""
 
-    trainer = create_online_trainer(config)
+    from miniseq.recipes import OnlineRecipeConfig, create_online_trainer
 
-    trainer.run()
+    def online(config: Annotated[OnlineRecipeConfig, tyro.conf.arg(name="")]) -> None:
+        trainer = create_online_trainer(config)
+
+        trainer.run()
+
+    return online
 
 
-def preference(
-    config: Annotated[PreferenceRecipeConfig, tyro.conf.arg(name="")],
-) -> None:
+def _preference():
     """Run standard preference training recipe."""
 
-    trainer = create_preference_trainer(config)
+    from miniseq.recipes import PreferenceRecipeConfig, create_preference_trainer
 
-    trainer.run()
+    def preference(
+        config: Annotated[PreferenceRecipeConfig, tyro.conf.arg(name="")],
+    ) -> None:
+        trainer = create_preference_trainer(config)
+
+        trainer.run()
+
+    return preference
 
 
-def sft(
-    config: Annotated[SFTRecipeConfig, tyro.conf.arg(name="")],
-) -> None:
+def _sft():
     """Run standard finetune training recipe."""
 
-    trainer = create_finetune_trainer(config)
+    from miniseq.configs import save_config
+    from miniseq.recipes import SFTRecipeConfig, create_finetune_trainer
 
-    save_config(config.cache_dir, config, name="sft_config")
+    def sft(
+        config: Annotated[SFTRecipeConfig, tyro.conf.arg(name="")],
+    ) -> None:
+        trainer = create_finetune_trainer(config)
 
-    trainer.run()
+        save_config(config.cache_dir, config, name="sft_config")
+
+        trainer.run()
+
+    return sft
 
 
-def evaluate(cfg: Annotated[EvalRecipeConfig, tyro.conf.arg(name="")]) -> None:
+def _evaluate():
     """Run standard evaluation pipeline."""
+    from miniseq.recipes import EvalRecipeConfig, create_evaluator
 
-    evaluator = create_evaluator(cfg)
+    def evaluate(cfg: Annotated[EvalRecipeConfig, tyro.conf.arg(name="")]) -> None:
+        evaluator = create_evaluator(cfg)
 
-    evaluator.run()
+        evaluator.run()
+
+    return evaluate
 
 
 def model_registry() -> None:
     """Display all registered models."""
 
     families = collections.defaultdict(list)
+
+    # Lazy-load to not clog CLI.
+    from miniseq import register_models
+    from miniseq.models import all_registered_models, get_model_family
+
+    register_models()
 
     for model in all_registered_models():
         families[get_model_family(model)].append(model)
@@ -83,13 +94,13 @@ def model_registry() -> None:
 
 
 def main() -> None:
-    local_rank = get_local_rank()
+    local_rank = int(os.environ.get("LOCAL_RANK", 0))
 
     runnable_recipes = {
-        "tune": sft,
-        "preference": preference,
-        "rl": online,
-        "evaluate": evaluate,
+        "tune": _sft,
+        "preference": _preference,
+        "rl": _online,
+        "evaluate": _evaluate,
     }
 
     other_recipes = {"model_registry": model_registry}
@@ -99,7 +110,7 @@ def main() -> None:
     args = list(sys.argv[1:])
 
     if args and args[0] in runnable_recipes:
-        cli_item = runnable_recipes[args[0]]
+        cli_item = runnable_recipes[args[0]]()
 
         args = args[1:]
 
