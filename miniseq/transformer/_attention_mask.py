@@ -5,7 +5,6 @@ from typing import Callable, TypeAlias
 
 import torch
 import torch.nn.functional as F
-from torch._dynamo._trace_wrapped_higher_order_op import TransformGetItemToIndex
 from torch.nn.attention.flex_attention import (
     _DEFAULT_SPARSE_BLOCK_SIZE,
     BlockMask,
@@ -79,6 +78,8 @@ def _custom_create_mask(
     h = torch.arange(0, num_heads, device=device)
     m = torch.arange(0, Q_LEN, device=device)
     n = torch.arange(0, KV_LEN, device=device)
+
+    from torch._dynamo._trace_wrapped_higher_order_op import TransformGetItemToIndex
 
     with TransformGetItemToIndex():
         mask_mod = mod_fn

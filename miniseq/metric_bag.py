@@ -12,7 +12,7 @@ from collections.abc import Mapping
 from typing import Any, TypeVar
 
 import torch
-from torcheval.metrics import Metric
+from torcheval.metrics.metric import Metric
 from torcheval.metrics.toolkit import sync_and_compute_collection
 
 from miniseq.machine import Machine
