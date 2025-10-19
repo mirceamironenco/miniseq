@@ -1,7 +1,8 @@
 import math_verify
 from typing_extensions import TypedDict
 
-from miniseq.datasets import MathVerifier, register_prompt_dataset
+from miniseq.datasets import register_prompt_dataset
+from miniseq.datasets.math_verify import MathVerifier
 
 
 def register_eval_datasets() -> None:

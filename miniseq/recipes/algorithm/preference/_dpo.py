@@ -9,9 +9,9 @@ from miniseq.metric_bag import MetricBag
 from miniseq.recipes.algorithm import (
     model_sequence_logps,
     update_logps,
-    update_sum_loss,
     update_preference_seqlens,
     update_seq_batch_metrics,
+    update_sum_loss,
 )
 from miniseq.trainer import TrainUnit
 from miniseq.transformer import CausalTransformerModel

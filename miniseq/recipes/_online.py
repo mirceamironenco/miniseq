@@ -13,7 +13,7 @@ from miniseq.data import (
     load_hf_pretrained_tokenzier,
     log_tokenizer,
 )
-from miniseq.datasets import MathVerifier
+from miniseq.datasets.math_verify import MathVerifier
 from miniseq.logging import get_logger, log_config, setup_logging
 from miniseq.machine import Machine, setup_default_machine
 from miniseq.models import (

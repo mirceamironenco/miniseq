@@ -31,7 +31,7 @@ logging.disable(logging.WARNING)
 
 # Lazy import since vllm has significant import time.
 if TYPE_CHECKING:
-    from vllm import LLM, LLMEngine, RequestOutput, SamplingParams
+    from vllm import LLM, LLMEngine, RequestOutput, SamplingParams, TokensPrompt
 
 logging.disable(logging.NOTSET)
 
@@ -261,7 +261,9 @@ class VLLMGenerator(Generator):
                 sampling_params = self._sampling_params
 
             # list[TokensPrompt]
-            token_prompts = [{"prompt_token_ids": tokens} for tokens in all_prompts]
+            token_prompts: list[TokensPrompt] = [
+                {"prompt_token_ids": tokens} for tokens in all_prompts
+            ]
 
             self._machine.barrier()
 
