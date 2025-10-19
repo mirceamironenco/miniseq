@@ -1,8 +1,7 @@
 import torch
-from torcheval.metrics import Mean, Sum
 
 from miniseq.data import PreferenceBatch, SequenceBatch
-from miniseq.metric_bag import MetricBag
+from miniseq.metric_bag import MetricBag, metrics
 from miniseq.utils import to_tensor
 
 
@@ -17,7 +16,7 @@ def update_sum_loss(
 
     n = num_targets or 1
 
-    metric_bag.get(Mean, name).update(loss / n, weight=n)
+    metric_bag.get(metrics.Mean, name).update(loss / n, weight=n)
 
 
 @torch.inference_mode()
@@ -32,19 +31,21 @@ def update_seq_batch_metrics(metric_bag: MetricBag, batch: SequenceBatch) -> Non
         ),
     )
 
-    metric_bag.get(Sum, "perf/num_examples").update(num_examples)
+    metric_bag.get(metrics.Sum, "perf/num_examples").update(num_examples)
 
-    metric_bag.get(Sum, "perf/num_elements").update(num_elements)
+    metric_bag.get(metrics.Sum, "perf/num_elements").update(num_elements)
 
-    metric_bag.get(Sum, "perf/num_target_elements").update(num_target_elements)
+    metric_bag.get(metrics.Sum, "perf/num_target_elements").update(num_target_elements)
 
-    metric_bag.get(Sum, "perf/total_num_examples").update(num_examples)
+    metric_bag.get(metrics.Sum, "perf/total_num_examples").update(num_examples)
 
-    metric_bag.get(Sum, "perf/total_num_elements").update(num_elements)
+    metric_bag.get(metrics.Sum, "perf/total_num_elements").update(num_elements)
 
-    metric_bag.get(Sum, "perf/total_num_target_elements").update(num_target_elements)
+    metric_bag.get(metrics.Sum, "perf/total_num_target_elements").update(
+        num_target_elements
+    )
 
-    metric_bag.get(Sum, "batch/padding").update(padding)
+    metric_bag.get(metrics.Sum, "batch/padding").update(padding)
 
 
 @torch.inference_mode()
@@ -60,7 +61,7 @@ def update_preference_seqlens(
         weight_chosen = chosen_batch.batch_size
         weight_rejected = rejected_batch.batch_size
 
-    metric_bag.get(Mean, "chosen_lengths").update(
+    metric_bag.get(metrics.Mean, "chosen_lengths").update(
         to_tensor(
             chosen_batch.num_target_elements / weight_chosen,
             device=metric_bag.device,
@@ -68,7 +69,7 @@ def update_preference_seqlens(
         weight=weight_chosen,
     )
 
-    metric_bag.get(Mean, "rejected_lengths").update(
+    metric_bag.get(metrics.Mean, "rejected_lengths").update(
         to_tensor(
             rejected_batch.num_target_elements / weight_rejected,
             device=metric_bag.device,
@@ -86,7 +87,7 @@ def update_lengths(
 ) -> None:
     assert total_length.numel() == 1
 
-    metric_bag.get(Mean, name).update(
+    metric_bag.get(metrics.Mean, name).update(
         total_length / num_sequences, weight=num_sequences
     )
 
@@ -98,12 +99,12 @@ def update_logps(
     chosen_logps: torch.Tensor,
     rejected_logps: torch.Tensor,
 ) -> None:
-    metric_bag.get(Mean, "chosen_logps").update(
+    metric_bag.get(metrics.Mean, "chosen_logps").update(
         chosen_logps.detach().sum() / batch.chosen_batch.num_examples,
         weight=batch.chosen_batch.num_examples,
     )
 
-    metric_bag.get(Mean, "rejected_logps").update(
+    metric_bag.get(metrics.Mean, "rejected_logps").update(
         rejected_logps.detach().sum() / batch.rejected_batch.num_examples,
         weight=batch.rejected_batch.num_examples,
     )

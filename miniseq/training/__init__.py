@@ -23,3 +23,13 @@ from miniseq.training._writer import (
     TensorBoardWriter,
     WandbWriter,
 )
+
+# isort: split
+
+from miniseq._lazy import soft_lazy_import
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from miniseq.training import data_parallel
+else:
+    data_parallel = soft_lazy_import("miniseq.training.data_parallel")

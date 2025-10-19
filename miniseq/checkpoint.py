@@ -19,9 +19,9 @@ from typing import Any, Protocol, TypeAlias, runtime_checkable
 import torch
 import torch.nn as nn
 
-import miniseq.training.data_parallel as data_parallel
 from miniseq.logging import get_logger
 from miniseq.machine import Machine
+from miniseq.training import data_parallel
 
 _log = get_logger()
 

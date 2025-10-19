@@ -9,7 +9,6 @@ from torch.optim.optimizer import Optimizer
 from typing_extensions import override
 
 from miniseq import cli
-from miniseq._lazy import LazyModule
 from miniseq.builder_config import BuilderConfig, config_as_dict
 
 
@@ -77,21 +76,24 @@ class SGDConfig(OptimizerConfig):
     fused: bool | None = None
 
 
-# TOOD: 8-bit Adam?
+# torchao import is deferred until needed
+def _adamwfp8():
+    import torchao
 
-torchao = LazyModule("torchao", globals(), "torchao")
+    return torchao.optim.AdamWFp8
 
 
 @cli.union_struct_choice(registry="optimizer", command="adam_fp8")
 @dataclass(kw_only=True, frozen=True)
 class AdamWFP8Config(OptimizerConfig):
     _target: type[Optimizer] = field(
-        default_factory=lambda: torchao.optim.AdamWFp8,  # type: ignore
-        init=False,
-        repr=False,
+        default_factory=lambda: _adamwfp8(), init=False, repr=False
     )
     betas: tuple[float, float] = (0.9, 0.999)
     eps: float = 1e-8
     amsgrad: bool = False
     block_size: int = 256
     bf16_stochastic_round: bool = False
+
+
+# TOOD: 8-bit Adam?

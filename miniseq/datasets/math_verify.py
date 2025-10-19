@@ -1,20 +1,22 @@
 from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
-from typing import Any, Literal
+from typing import TYPE_CHECKING, Any, Literal
 
-import math_verify
-from math_verify.parser import (
-    ExprExtractionConfig,
-    ExtractionTarget,
-    LatexExtractionConfig,
-)
 from typing_extensions import override
 
+from miniseq._lazy import soft_lazy_import
 from miniseq.datasets._verifiers import Verifier
 from miniseq.logging import get_logger
 
 _log = get_logger()
+
+if TYPE_CHECKING:
+    import math_verify
+    from math_verify import parser
+else:
+    math_verify = soft_lazy_import("math_verify")
+    parser = soft_lazy_import("math_verify.parser")
 
 
 class MathVerifier(Verifier):
@@ -29,14 +31,8 @@ class MathVerifier(Verifier):
         timeout_seconds: int = 5,
         guess_extraction_mod: Literal["first_match", "any_match"] = "any_match",
         gold_extraction_mod: Literal["first_match", "any_match"] = "any_match",
-        gold_extraction_target: Sequence[ExtractionTarget] = [
-            LatexExtractionConfig(),
-            ExprExtractionConfig(),
-        ],
-        guess_extraction_target: Sequence[ExtractionTarget] = [
-            LatexExtractionConfig(),
-            ExprExtractionConfig(),
-        ],
+        gold_extraction_target: Sequence[parser.ExtractionTarget] = [],
+        guess_extraction_target: Sequence[parser.ExtractionTarget] = [],
         verbose: bool = False,
     ) -> None:
         self._float_rounding = float_rounding
@@ -45,8 +41,23 @@ class MathVerifier(Verifier):
         self._timeout_seconds = timeout_seconds
         self._guess_extraction_mode = guess_extraction_mod
         self._gold_extraction_mode = gold_extraction_mod
+
+        if not guess_extraction_target:
+            guess_extraction_target = [
+                parser.LatexExtractionConfig(),
+                parser.ExprExtractionConfig(),
+            ]
+
         self._guess_extraction_target = guess_extraction_target
+
+        if not gold_extraction_target:
+            gold_extraction_target = [
+                parser.LatexExtractionConfig(),
+                parser.ExprExtractionConfig(),
+            ]
+
         self._gold_extraxtion_target = gold_extraction_target
+
         self._verbose = verbose
 
     @override

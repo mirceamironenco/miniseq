@@ -13,7 +13,6 @@ import torch.nn as nn
 from torch.distributed.tensor import DTensor
 from typing_extensions import override
 
-import miniseq.training.data_parallel as data_parallel
 from miniseq.generation._base import Generator
 from miniseq.logging import get_logger
 from miniseq.machine import Machine
@@ -24,7 +23,12 @@ from miniseq.models import (
     get_to_hf_checkpoint_converter,
     merged_named_parameters,
 )
-from miniseq.training import StopWatch, manual_seed, maybe_unwrap_ac_checkpoint
+from miniseq.training import (
+    StopWatch,
+    data_parallel,
+    manual_seed,
+    maybe_unwrap_ac_checkpoint,
+)
 
 # Silence vLLM import logging.
 logging.disable(logging.WARNING)

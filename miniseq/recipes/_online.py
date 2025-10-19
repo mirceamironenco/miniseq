@@ -96,7 +96,7 @@ class OnlineRecipeConfig(cfg.TrainRecipeConfig):
         split="train",
         test_split="test",
         apply_chat_template=True,
-        verifiers=MathVerifier(),
+        verifier_factory=lambda: MathVerifier(),
     )
 
     valid_data: cfg.data.RegisteredDatasetConfig | None = None

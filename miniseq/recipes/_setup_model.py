@@ -14,8 +14,7 @@ from miniseq.models import (
     reset_non_persistent_buffers,
     reset_parameters,
 )
-from miniseq.training import apply_ac
-from miniseq.training.data_parallel import to_data_parallel
+from miniseq.training import apply_ac, data_parallel
 from miniseq.transformer import TransformerDecoderModel
 from miniseq.utils import ModuleT, TorchCompileMode
 
@@ -161,7 +160,7 @@ def setup_model(
 
     machine.barrier()
 
-    model = to_data_parallel(
+    model = data_parallel.to_data_parallel(
         model,
         machine=machine,
         replicate=dp_config.replicate,

@@ -34,11 +34,14 @@ from torch.optim.lr_scheduler import LRScheduler
 from torch.optim.optimizer import Optimizer
 from torch.profiler import record_function
 from torch.utils.data import DataLoader
-from torcheval.metrics import Mean
 from typing_extensions import TypeVar, override
 
-import miniseq.training.data_parallel as data_parallel
 from miniseq.builder_config import DataclassInstance
+from miniseq.checkpoint import (
+    CheckpointManager,
+    Stateful,
+    create_checkpoint_manager,
+)
 from miniseq.configs import TrainRecipeConfig, WandbConfig
 from miniseq.data import EpochSampler, TrajectoryBatch
 from miniseq.evaluator import Evaluator, EvalUnit, build_evaluator
@@ -48,6 +51,7 @@ from miniseq.machine import Machine
 from miniseq.metric_bag import (
     MetricBag,
     extend_batch_metrics,
+    metrics,
     sync_and_compute_metrics,
 )
 from miniseq.models import ModelConfig
@@ -62,14 +66,10 @@ from miniseq.training import (
     TensorBoardWriter,
     clip_gradient_norm,
     create_memory_tracker,
+    data_parallel,
     log_memory,
     manual_seed,
     normalize_gradients,
-)
-from miniseq.training._checkpoint import (
-    CheckpointManager,
-    Stateful,
-    create_checkpoint_manager,
 )
 from miniseq.utils import SupportsDeviceTransfer, clear_unused_memory
 
@@ -781,7 +781,7 @@ class Trainer(Generic[BatchT, DataBatchT]):
             self._run_optimizer_step()
 
         if grad_norm is not None:
-            self._metric_bag.get(Mean, "grad_norm").update(grad_norm)
+            self._metric_bag.get(metrics.Mean, "grad_norm").update(grad_norm)
 
         self._num_effective_batches += 1
 

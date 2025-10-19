@@ -3,13 +3,12 @@ from dataclasses import dataclass
 from typing import Literal
 
 import torch
-from torcheval.metrics import Mean, Sum
 from typing_extensions import override
 
 from miniseq.data import CompletionScorer, PromptBatch, SequenceBatch, TrajectoryBatch
 from miniseq.generation import Generator
 from miniseq.machine import Machine
-from miniseq.metric_bag import MetricBag
+from miniseq.metric_bag import MetricBag, metrics
 from miniseq.recipes.algorithm import (
     model_logps,
     packed_scatter_sum_reduce,
@@ -36,7 +35,7 @@ class GRPOConfig:
 
 @torch.inference_mode()
 def update_avg_reward(metric_bag: MetricBag, avg_reward: torch.Tensor) -> None:
-    metric_bag.get(Mean, "avg_reward").update(avg_reward, weight=1)
+    metric_bag.get(metrics.Mean, "avg_reward").update(avg_reward, weight=1)
 
 
 @torch.inference_mode()
@@ -45,7 +44,7 @@ def update_reward_groups_same(
 ) -> None:
     assert same_group_reward.numel() == 1
 
-    metric_bag.get(Mean, "group_reward_same").update(
+    metric_bag.get(metrics.Mean, "group_reward_same").update(
         same_group_reward / num_groups, weight=num_groups
     )
 
@@ -53,7 +52,7 @@ def update_reward_groups_same(
 @torch.inference_mode()
 def update_rollout_size(metric_bag: MetricBag, trajectory: TrajectoryBatch) -> None:
     batch_size = to_tensor(trajectory.batch_size, device=metric_bag.device)
-    metric_bag.get(Sum, "batch/rollout_batch_size").update(batch_size)
+    metric_bag.get(metrics.Sum, "batch/rollout_batch_size").update(batch_size)
 
 
 class GRPOUnit(OnlineTrainUnit):

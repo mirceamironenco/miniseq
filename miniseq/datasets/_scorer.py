@@ -5,12 +5,11 @@ from abc import ABC, abstractmethod
 from typing import Callable, TypeVar
 
 import torch
-from torcheval.metrics import Mean
 from typing_extensions import override
 
 from miniseq.data import CompletionScorer, PretrainedHFTokenizer, PromptBatch
 from miniseq.datasets._verifiers import Verifier
-from miniseq.metric_bag import MetricBag
+from miniseq.metric_bag import MetricBag, metrics
 from miniseq.utils import to_tensor
 
 T = TypeVar("T")
@@ -43,7 +42,9 @@ def update_verifier_score(
 ) -> None:
     assert total_score.numel() == 1
 
-    metric_bag.get(Mean, name).update(total_score / num_answers, weight=num_answers)
+    metric_bag.get(metrics.Mean, name).update(
+        total_score / num_answers, weight=num_answers
+    )
 
 
 class VerificationScorer(AbstractScorer):

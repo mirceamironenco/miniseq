@@ -11,20 +11,33 @@ from __future__ import annotations
 
 import logging
 from collections.abc import Mapping
-from typing import Any, TypeVar
+from typing import TYPE_CHECKING, Any, TypeVar, Generic
 
 import torch
-from torcheval.metrics import Metric
-from torcheval.metrics.toolkit import sync_and_compute_collection
 
+from miniseq._lazy import soft_lazy_import
 from miniseq.machine import Machine
 
-MetricT = TypeVar("MetricT", bound=Metric[Any])
+if TYPE_CHECKING:
+    import torcheval.metrics as metrics
+    import torcheval.metrics.toolkit as toolkit
+
+    from torcheval.metrics import Metric as _Metric
+else:
+    metrics = soft_lazy_import("torcheval.metrics")
+    toolkit = soft_lazy_import("torcheval.metrics.toolkit")
+
+    TComputeReturn = TypeVar("TComputeReturn")
+
+    class _Metric(Generic[TComputeReturn]): ...
+
+
+MetricT = TypeVar("MetricT", bound=_Metric[Any])
 
 
 class MetricBag:
     _device: torch.device
-    _metrics: dict[str, Metric[Any]]
+    _metrics: dict[str, metrics.Metric[Any]]
 
     def __init__(self, device: torch.device) -> None:
         super().__setattr__("_metrics", {})
@@ -49,7 +62,7 @@ class MetricBag:
         return metric
 
     @property
-    def metrics(self) -> Mapping[str, Metric[Any]]:
+    def metrics(self) -> Mapping[str, metrics.Metric[Any]]:
         """The metrics contained in this bag."""
         return self._metrics
 
@@ -65,9 +78,9 @@ class MetricBag:
         self._metrics.clear()
 
         for name, metric in state_dict.items():
-            if not isinstance(metric, Metric):
+            if not isinstance(metric, metrics.Metric):
                 raise ValueError(
-                    f"`state_dict['{name}']` must be of type `{Metric}`, but is of type `{type(metric)}` instead."
+                    f"`state_dict['{name}']` must be of type `{metrics.Metric}`, but is of type `{type(metric)}` instead."
                 )
 
             metric.to(self._device)
@@ -93,7 +106,7 @@ def sync_and_compute_metrics(
     else:
         metrics = dict(bag.metrics)
 
-        values = sync_and_compute_collection(
+        values = toolkit.sync_and_compute_collection(
             metrics=metrics, process_group=machine.process_group()
         )
 
