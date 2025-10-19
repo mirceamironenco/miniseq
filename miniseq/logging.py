@@ -1,13 +1,10 @@
 from __future__ import annotations
 
 import logging
-import math
 import os
 from logging import DEBUG, INFO, Formatter, Handler, NullHandler, getLogger
-from typing import Final
 
 import rich
-import torch
 from rich.console import Console
 from rich.logging import RichHandler
 from rich.pretty import pretty_repr
@@ -132,35 +129,3 @@ def log_config(log: logging.Logger, config: object) -> None:
     log.info(
         f"Config:\n {pretty_repr(config, max_width=140, max_string=80, indent_size=1)}"
     )
-
-
-_UNITS: Final = ["B", "KiB", "MiB", "GiB", "TiB", "PiB"]
-
-
-def format_as_byte_size(value: object) -> str:
-    """Format metric ``value`` in byte units."""
-
-    if isinstance(value, float):
-        size = value
-    elif isinstance(value, (str, torch.Tensor, int)):
-        try:
-            size = float(value)
-        except ValueError:
-            return f"{value}"
-    else:
-        return f"{value}"
-
-    unit_idx = 0
-
-    if not math.isfinite(size) or size <= 0.0:
-        return "0 B"
-
-    while size >= 1024:
-        size /= 1024
-
-        unit_idx += 1
-
-    try:
-        return f"{size:.2f} {_UNITS[unit_idx]}"
-    except IndexError:
-        return "value is too big to be properly formatted."

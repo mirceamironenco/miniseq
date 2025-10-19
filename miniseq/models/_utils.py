@@ -1,13 +1,13 @@
 import logging
+import math
 from collections.abc import Iterable, Iterator
 from dataclasses import dataclass
 from itertools import chain
-from typing import Callable, Protocol, cast, runtime_checkable
+from typing import Callable, Final, Protocol, cast, runtime_checkable
 
 import torch
 import torch.nn as nn
 
-from miniseq.logging import format_as_byte_size
 from miniseq.machine import Machine
 from miniseq.models._lora import LoRALayer
 from miniseq.utils import get_local_rank
@@ -337,6 +337,38 @@ def get_module_size(module: nn.Module) -> ModuleSizeInfo:
         info.total_size_bytes += size_bytes
 
     return info
+
+
+_UNITS: Final = ["B", "KiB", "MiB", "GiB", "TiB", "PiB"]
+
+
+def format_as_byte_size(value: object) -> str:
+    """Format metric ``value`` in byte units."""
+
+    if isinstance(value, float):
+        size = value
+    elif isinstance(value, (str, torch.Tensor, int)):
+        try:
+            size = float(value)
+        except ValueError:
+            return f"{value}"
+    else:
+        return f"{value}"
+
+    unit_idx = 0
+
+    if not math.isfinite(size) or size <= 0.0:
+        return "0 B"
+
+    while size >= 1024:
+        size /= 1024
+
+        unit_idx += 1
+
+    try:
+        return f"{size:.2f} {_UNITS[unit_idx]}"
+    except IndexError:
+        return "value is too big to be properly formatted."
 
 
 def log_model(log: logging.Logger, model: nn.Module) -> None:
