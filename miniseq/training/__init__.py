@@ -1,5 +1,4 @@
 from miniseq.training._ac import apply_ac, maybe_unwrap_ac_checkpoint
-from miniseq.training._checkpoint import CheckpointManager, create_checkpoint_manager
 from miniseq.training._device_memory import (
     DeviceMemoryTracker,
     create_memory_tracker,

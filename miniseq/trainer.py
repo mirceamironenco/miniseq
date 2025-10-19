@@ -30,7 +30,6 @@ from typing import (
 import torch
 import torch.nn as nn
 from rich.progress import Progress, TaskID
-from torch.distributed.checkpoint.stateful import Stateful
 from torch.optim.lr_scheduler import LRScheduler
 from torch.optim.optimizer import Optimizer
 from torch.profiler import record_function
@@ -54,7 +53,6 @@ from miniseq.metric_bag import (
 from miniseq.models import ModelConfig
 from miniseq.nn import get_current_lr
 from miniseq.training import (
-    CheckpointManager,
     DeviceMemoryTracker,
     LogMetricWriter,
     MetricWriter,
@@ -63,11 +61,15 @@ from miniseq.training import (
     StopWatch,
     TensorBoardWriter,
     clip_gradient_norm,
-    create_checkpoint_manager,
     create_memory_tracker,
     log_memory,
     manual_seed,
     normalize_gradients,
+)
+from miniseq.training._checkpoint import (
+    CheckpointManager,
+    Stateful,
+    create_checkpoint_manager,
 )
 from miniseq.utils import SupportsDeviceTransfer, clear_unused_memory
 

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from collections.abc import Iterable
 from dataclasses import dataclass, field
 from typing import Any
@@ -7,14 +9,8 @@ from torch.optim.optimizer import Optimizer
 from typing_extensions import override
 
 from miniseq import cli
+from miniseq._lazy import LazyModule
 from miniseq.builder_config import BuilderConfig, config_as_dict
-
-try:
-    from torchao.optim import AdamWFp8
-except ImportError:
-    _has_torchao = False
-else:
-    _has_torchao = True
 
 
 @cli.make_union_registry("optimizer")
@@ -83,19 +79,19 @@ class SGDConfig(OptimizerConfig):
 
 # TOOD: 8-bit Adam?
 
+torchao = LazyModule("torchao", globals(), "torchao")
 
-if _has_torchao:
 
-    @cli.union_struct_choice(registry="optimizer", command="adam_fp8")
-    @dataclass(kw_only=True, frozen=True)
-    class AdamWFP8Config(OptimizerConfig):
-        _target: type[Optimizer] = field(
-            default_factory=lambda: AdamWFp8,  # type: ignore
-            init=False,
-            repr=False,
-        )
-        betas: tuple[float, float] = (0.9, 0.999)
-        eps: float = 1e-8
-        amsgrad: bool = False
-        block_size: int = 256
-        bf16_stochastic_round: bool = False
+@cli.union_struct_choice(registry="optimizer", command="adam_fp8")
+@dataclass(kw_only=True, frozen=True)
+class AdamWFP8Config(OptimizerConfig):
+    _target: type[Optimizer] = field(
+        default_factory=lambda: torchao.optim.AdamWFp8,  # type: ignore
+        init=False,
+        repr=False,
+    )
+    betas: tuple[float, float] = (0.9, 0.999)
+    eps: float = 1e-8
+    amsgrad: bool = False
+    block_size: int = 256
+    bf16_stochastic_round: bool = False

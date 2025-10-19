@@ -7,6 +7,8 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of https://github.com/facebookresearch/fairseq2.
 
+from __future__ import annotations
+
 import logging
 from collections.abc import Mapping
 from typing import Any, TypeVar
