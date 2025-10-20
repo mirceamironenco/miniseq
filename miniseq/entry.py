@@ -75,8 +75,8 @@ def model_registry() -> None:
     families = collections.defaultdict(list)
 
     # Lazy-load to not clog CLI.
-    from miniseq import register_models
     from miniseq.models import all_registered_models, get_model_family
+    from miniseq.runtime import register_models
 
     register_models()
 

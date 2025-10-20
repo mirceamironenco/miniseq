@@ -53,21 +53,10 @@ class VLLMEngineConfig:
     enforce_eager: bool = False
     """Disable CUDA graph & use eager mode."""
 
-    max_seq_len_to_capture: int = 8192
-    """Max seqlen covered by CUDA graphs."""
-
     max_model_len: int = field(init=False, default=8192)
-
-    def __post_init__(self) -> None:
-        if self.max_seq_len_to_capture > self.max_model_len:
-            self.max_seq_len_to_capture = self.max_model_len
 
     def set_model_len(self, max_model_len: int) -> None:
         self.max_model_len = max_model_len
-
-        self.max_seq_len_to_capture = min(
-            self.max_seq_len_to_capture, self.max_model_len
-        )
 
 
 @dataclass(kw_only=True)

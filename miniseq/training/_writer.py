@@ -4,7 +4,7 @@ import logging
 import math
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from typing_extensions import override
 
@@ -14,14 +14,6 @@ except ImportError:
     has_tensorboard = False
 else:
     has_tensorboard = True
-
-try:
-    import wandb
-    from wandb.sdk.wandb_run import Run
-except ImportError:
-    has_wandb = False
-else:
-    has_wandb = True
 
 
 class MetricWriter(ABC):
@@ -159,6 +151,10 @@ class TensorBoardWriter(MetricWriter):
         self._writers.clear()
 
 
+if TYPE_CHECKING:
+    from wandb.sdk.wandb_run import Run
+
+
 class WandbWriter(MetricWriter):
     _run_name: str | None
     _log_dir: Path
@@ -176,6 +172,14 @@ class WandbWriter(MetricWriter):
         job_type: str | None = None,
         config_to_save: dict[str, Any] | None = None,
     ) -> None:
+        try:
+            import wandb
+
+        except ImportError:
+            has_wandb = False
+        else:
+            has_wandb = True
+
         if not has_wandb:
             raise ImportError("wandb not installed. Install with `pip install wandb`")
 

@@ -26,8 +26,9 @@ from miniseq.training._writer import (
 
 # isort: split
 
-from miniseq._lazy import soft_lazy_import
 from typing import TYPE_CHECKING
+
+from miniseq._lazy import soft_lazy_import
 
 if TYPE_CHECKING:
     from miniseq.training import data_parallel

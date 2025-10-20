@@ -11,7 +11,7 @@ from __future__ import annotations
 
 import logging
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, TypeVar, Generic
+from typing import TYPE_CHECKING, Any, Generic, TypeVar
 
 import torch
 
@@ -21,7 +21,6 @@ from miniseq.machine import Machine
 if TYPE_CHECKING:
     import torcheval.metrics as metrics
     import torcheval.metrics.toolkit as toolkit
-
     from torcheval.metrics import Metric as _Metric
 else:
     metrics = soft_lazy_import("torcheval.metrics")

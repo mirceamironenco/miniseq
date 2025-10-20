@@ -18,11 +18,16 @@ We implement a benchmark for evaluating the ICL capabilities of sequence modelin
 
 ## Running the benchmark
 
+The following assumes `miniseq` is installed.
+
 First, install [fla](https://github.com/fla-org/flash-linear-attention), as we rely on it to implement certain sequence mixers (e.g. [Gated Linear Attention](https://arxiv.org/abs/2312.06635)):
 
 ```sh
-pip install flash-linear-attention
+uv pip install flash-linear-attention
 ```
+(or `pip install flash-linear-attention`)
+
+For the following, if using `uv` replace `python` with `uv run`.
 
 Run `python recipe.py --choices` to see the standard CLI options and understand what **tasks**, **sequence mixers** and **state mixers** are available:
 

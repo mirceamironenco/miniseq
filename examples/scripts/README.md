@@ -32,7 +32,7 @@ The default SFT, preference and RL recipes entry points and how to run them is d
 
 Once installed, a `miniseq_recipe` CLI command is available. The command (described below) points to `miniseq/entry.py`, so it's also possible to run the entrypoint via e.g. `python -m miniseq.entry ...` from the root directory.
 
-To start, simply run `miniseq_recipe --help` to list the standard subcommands:
+To start, simply run `uv run miniseq_recipe --help` to list the standard subcommands:
 
 ```
 usage: miniseq_recipe [-h] {tune,preference,rl,evaluate,model_registry}
@@ -51,7 +51,7 @@ usage: miniseq_recipe [-h] {tune,preference,rl,evaluate,model_registry}
 ╰────────────────────────────────────────────────────────────╯
 ```
 
-Running `miniseq_recipe model_registry` will list the currently supported models:
+Running `uv run miniseq_recipe model_registry` will list the currently supported models:
 
 ```
                                   Registered models                                   
@@ -76,7 +76,7 @@ The standard recieps can be customized using either YAML files (for simple chang
 
 ### Example usage via CLI
 
-The standard supervised fine-tuning recipe exposes the following options (seen by running `miniseq_recipe tune --help`):
+The standard supervised fine-tuning recipe exposes the following options (seen by running `uv run miniseq_recipe tune --help`):
 
 
 <details>
@@ -225,14 +225,14 @@ lora:None profiler:None validate:None
 
 </details>
 
-By default running `miniseq_recipe tune` will train [Qwen 2.5-1.5b-instruct](https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct) on the [alpaca cleaned](https://huggingface.co/datasets/yahma/alpaca-cleaned) dataset. Overriding options is done via the standard syntax:
+By default running `uv run miniseq_recipe tune` will train [Qwen 2.5-1.5b-instruct](https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct) on the [alpaca cleaned](https://huggingface.co/datasets/yahma/alpaca-cleaned) dataset. Overriding options is done via the standard syntax:
 
 ```bash
-miniseq_recipe tune --model.name=qwen2.5-3b-instruct
+uv run miniseq_recipe tune --model.name=qwen2.5-3b-instruct
 ```
 
 miniseq supports FSDP2/DDP (with TP/CP in progress) training via `torchrun`:
 
 ```bash
-torchrun --nproc-per-node=$GPU --no-python miniseq_recipe tune --model.name=qwen2.5-3b-instruct
+uv run torchrun --nproc-per-node=gpu --no-python miniseq_recipe tune --model.name=qwen2.5-3b-instruct
 ```

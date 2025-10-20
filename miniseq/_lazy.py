@@ -7,14 +7,11 @@ from typing import Any
 _lock = threading.RLock()
 
 
-def _bind_on_parent(fullname: str, module: types.ModuleType) -> None:
-    parent, _, child = fullname.rpartition(".")
-    if not parent:
-        return
-    # Ensure parent is imported and bind the attribute
-    parent_mod = sys.modules.get(parent) or importlib.import_module(parent)
-    if getattr(parent_mod, child, None) is not module:
-        setattr(parent_mod, child, module)
+def soft_lazy_import(fullname: str) -> types.ModuleType:
+    existing = sys.modules.get(fullname)
+    if existing is not None:
+        return existing
+    return _SoftLazyModule(fullname)
 
 
 def lazy_import(fullname: str) -> types.ModuleType:
@@ -50,6 +47,16 @@ def lazy_import(fullname: str) -> types.ModuleType:
 
         _bind_on_parent(fullname, module)
         return module
+
+
+def _bind_on_parent(fullname: str, module: types.ModuleType) -> None:
+    parent, _, child = fullname.rpartition(".")
+    if not parent:
+        return
+    # Ensure parent is imported and bind the attribute
+    parent_mod = sys.modules.get(parent) or importlib.import_module(parent)
+    if getattr(parent_mod, child, None) is not module:
+        setattr(parent_mod, child, module)
 
 
 class LazyModule(types.ModuleType):
@@ -139,10 +146,3 @@ class _SoftLazyModule(types.ModuleType):
         if name.startswith("_"):
             raise AttributeError(name)
         return getattr(self._load(), name)
-
-
-def soft_lazy_import(fullname: str) -> types.ModuleType:
-    existing = sys.modules.get(fullname)
-    if existing is not None:
-        return existing
-    return _SoftLazyModule(fullname)

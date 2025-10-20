@@ -4,13 +4,13 @@ from dataclasses import dataclass, field
 import torch
 
 from miniseq import configs as cfg
-from miniseq import register_models
 from miniseq.data import load_hf_pretrained_tokenzier, log_tokenizer
 from miniseq.evaluator import Evaluator, build_evaluator
 from miniseq.generation import VLLMEngineConfig, VLLMSamplingConfig
 from miniseq.logging import create_rich_progress, get_logger, log_config, setup_logging
 from miniseq.machine import Machine, setup_default_machine
 from miniseq.models import ModelConfig, build_model, load_model_checkpoint, log_model
+from miniseq.runtime import register_models
 from miniseq.trainer import create_metric_writers
 from miniseq.training import Profiler, create_memory_tracker, set_seed
 
