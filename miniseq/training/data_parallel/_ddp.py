@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from torch.nn.parallel import DistributedDataParallel as DDP
 
 from miniseq.machine import Machine, all_ranks_same_trainable_params

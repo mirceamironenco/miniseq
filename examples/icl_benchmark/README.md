@@ -18,13 +18,18 @@ We implement a benchmark for evaluating the ICL capabilities of sequence modelin
 
 ## Running the benchmark
 
+The following assumes `miniseq` is installed.
+
 First, install [fla](https://github.com/fla-org/flash-linear-attention), as we rely on it to implement certain sequence mixers (e.g. [Gated Linear Attention](https://arxiv.org/abs/2312.06635)):
 
 ```sh
-pip install flash-linear-attention
+uv pip install flash-linear-attention
 ```
+(or `pip install flash-linear-attention` in the corresponding environment)
 
-Run `python recipe.py --choices` to see the standard CLI options and understand what **tasks**, **sequence mixers** and **state mixers** are available:
+For the following, if not using `uv` replace `uv run` with `python`.
+
+Run `uv run recipe.py --choices` to see the standard CLI options and understand what **tasks**, **sequence mixers** and **state mixers** are available:
 
 ```
 ╭─ task choices ─────────────────────────────────────────────────────────────╮
@@ -54,17 +59,17 @@ Run `python recipe.py --choices` to see the standard CLI options and understand 
 ╰────────────────────────────────────────────────────────────────────────────╯
 ```
 
-These options need to be specified before any other overrides, and once specified allow for the customization of individual layer and task parameters. The following is equivalent to running the default command (`python recipe.py --help`): 
+These options need to be specified before any other overrides, and once specified allow for the customization of individual layer and task parameters. The following is equivalent to running the default command (`uv run recipe.py --help`): 
 
 ```sh
-python recipe.py task:mqar model.seq_mixer:attention model.state_mixer:mlp --help
+uv run recipe.py task:mqar model.seq_mixer:attention model.state_mixer:mlp --help
 ```
 
 Running the above without the `--help` option will train a small 2-layer standard transformer (with multi-head attention and MLPs) on the [MQAR](https://arxiv.org/abs/2312.04927) task, which is standard for evaluation ICL capabilities. We also turn off wandb logging (controlled by `wandb:on` and `wandb:None`) for a dry run:
 
 
 ```sh
-python recipe.py wandb:None task:mqar model.seq_mixer:attention model.state_mixer:mlp
+uv run recipe.py wandb:None task:mqar model.seq_mixer:attention model.state_mixer:mlp
 ```
 
 The model should reach close to ~98% accuracy after ~1500 steps (4-5 minutes on a single 5090).

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from collections.abc import Mapping
 from dataclasses import dataclass
 from pathlib import Path
@@ -219,7 +221,9 @@ class PromptDatasetConfig(BuilderConfig[PromptDataset], Generic[MapItemT]):
     assistant_message: Annotated[str | None, tyro.conf.Suppress] = None
     prompt_transform: Callable[[str], str] | None = None
     apply_chat_template: bool = True
-    verifiers: Verifier | list[Verifier]
+
+    verifiers: Verifier | list[Verifier] | None = None
+    verifier_factory: Callable[..., Verifier | list[Verifier]] | None = None
 
     @override
     def build(
@@ -242,7 +246,13 @@ class PromptDatasetConfig(BuilderConfig[PromptDataset], Generic[MapItemT]):
                 prompt_transform=self.prompt_transform,
             )
 
-        verifier = self.verifiers
+        verifier, verifier_factory = self.verifiers, self.verifier_factory
+
+        if verifier is None:
+            if verifier_factory is None:
+                raise ValueError("Either verifiers or verifier_factory must be set.")
+
+            verifier = verifier_factory()
 
         if isinstance(verifier, list):
             verifier = ChainedVerifier(*verifier)

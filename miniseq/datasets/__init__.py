@@ -14,6 +14,5 @@ from miniseq.datasets._verifiers import (
     ChainedVerifier,
     EqualityVerifier,
     MapVerifier,
-    MathVerifier,
     Verifier,
 )

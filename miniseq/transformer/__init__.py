@@ -12,7 +12,6 @@ from miniseq.transformer._attention_mask import (
     build_dense_mask_from_mod,
     causal_mask_mod,
 )
-from miniseq.transformer._cce import LinearCrossEntropyMasked, build_cce_nll_forward
 from miniseq.transformer._decoder import (
     FeedForward,
     FFNConfig,

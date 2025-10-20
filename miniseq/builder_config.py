@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from dataclasses import Field, asdict, dataclass, is_dataclass
 from typing import Any, ClassVar, Generic, Protocol, TypeVar, runtime_checkable
 

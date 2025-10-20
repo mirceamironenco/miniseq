@@ -1,17 +1,16 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torcheval.metrics import Mean
 from typing_extensions import override
 
 from miniseq.data import PreferenceBatch
-from miniseq.metric_bag import MetricBag
+from miniseq.metric_bag import MetricBag, metrics
 from miniseq.recipes.algorithm import (
     model_sequence_logps,
     update_logps,
-    update_sum_loss,
     update_preference_seqlens,
     update_seq_batch_metrics,
+    update_sum_loss,
 )
 from miniseq.trainer import TrainUnit
 from miniseq.transformer import CausalTransformerModel
@@ -21,7 +20,7 @@ from miniseq.transformer import CausalTransformerModel
 def update_dpo_loss(
     metric_bag: MetricBag, loss: torch.Tensor, batch: PreferenceBatch
 ) -> None:
-    metric_bag.get(Mean, "dpo_loss").update(
+    metric_bag.get(metrics.Mean, "dpo_loss").update(
         loss.detach() / batch.chosen_batch.num_examples,
         weight=batch.chosen_batch.num_examples,
     )

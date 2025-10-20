@@ -1,3 +1,23 @@
+<details>
+
+<summary><h3>Running the scripts</a></h3></summary>
+
+All runner scripts in this folder use a shared `parse.sh` helper that cleanly separates the **launcher / runner** from the **script arguments**.
+
+```bash
+bash <script>.sh [<RUNNER...>] [-- <SCRIPT_ARGS...>]
+```
+
+- **`<RUNNER...>` (optional):** Tokens for the command that launches the Python file  
+  (e.g., `python`, `uv run`, `torchrun --nproc-per-node=2`).  
+  If omitted, the default is `uv run`.
+- **`--` (optional but recommended):** End-of-options delimiter to separate the runner from your script’s own flags.
+- **`<SCRIPT_ARGS...>` (optional):** Arguments passed to the underlying Python script (after the file name).
+
+Simply run any of the below examples and the fully-resolved commands will be printed.
+
+</details>
+
 ## RL Examples
 
 [GRPO](https://arxiv.org/abs/2402.03300) is a variant of [PPO](https://arxiv.org/abs/1707.06347) which replaces the critic network with a Monte Carlo estimate of the value function. 
@@ -13,7 +33,7 @@ bash run_countdown_qwen2.5-3b.sh
 For distirbuted training pass the launcher command after the filename additionally ending with the end-of-options delimiter `--`. For example, to run on 2 GPUs:
 
 ```bash
-bash run_countdown_qwen2.5-3b.sh torchrun --nproc-per-node=2 --
+bash run_countdown_qwen2.5-3b.sh uv run torchrun --nproc-per-node=2 --
 ```
 
 We compare the effect of different data packing strategies and attention implementation choices:
@@ -61,7 +81,7 @@ The above plots  can be reproduced with the following comands (full wandb logs [
 </tbody>
 </table>
 
-To use wandb, make sure the `WANDB_API_KEY` env. variable is set, otherwise remove the `--wandb.run_name=...` overrides.
+To use wandb, make sure the `WANDB_API_KEY` env. variable is set, otherwise remove the `--wandb.run_name=...` overrides in the above commands.
 
 <details>
 
@@ -126,7 +146,7 @@ We follow [verl](https://github.com/volcengine/verl) implementing the environmen
 <td>
 <details>
 <summary><code>bash run_gsm8k.sh ...</code></summary>
-<pre><code>bash run_gsm8k.sh torchrun --nproc-per-node=2 -- lora:on --model.name=qwen2.5-7b-instruct --train.device_batch_size=64</code></pre>
+<pre><code>bash run_gsm8k.sh uv run torchrun --nproc-per-node=2 -- lora:on --model.name=qwen2.5-7b-instruct --train.device_batch_size=64</code></pre>
 </details>
 </td>
 </tr>
@@ -136,7 +156,7 @@ We follow [verl](https://github.com/volcengine/verl) implementing the environmen
 <td>
 <details>
 <summary><code>bash run_gsm8k.sh ...</code></summary>
-<pre><code>bash run_gsm8k.sh torchrun --nproc-per-node=2 -- lora:on --model.name=qwen2.5-14b-instruct --train.device_batch_size=64</code></pre>
+<pre><code>bash run_gsm8k.sh uv run torchrun --nproc-per-node=2 -- lora:on --model.name=qwen2.5-14b-instruct --train.device_batch_size=64</code></pre>
 </details>
 </td>
 </tr>
@@ -189,7 +209,7 @@ trainer.run()
 To run on 4 GPUs:
 
 ```bash
-torchrun --nproc-per-node=4 ultrafeedback.py --model.name=qwen2.5-7b-instruct --packed=True --model.flash_attention2=True
+uv run torchrun --nproc-per-node=4 ultrafeedback.py --model.name=qwen2.5-7b-instruct --packed=True --model.flash_attention2=True
 ```
 
 

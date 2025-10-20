@@ -2,13 +2,12 @@ import itertools
 
 import torch
 import torch.nn as nn
-from torcheval.metrics import Mean
 from typing_extensions import override
 
 from miniseq.data import CompletionScorer, PromptBatch
 from miniseq.evaluator import EvalUnit
 from miniseq.generation import Generator
-from miniseq.metric_bag import MetricBag
+from miniseq.metric_bag import MetricBag, metrics
 from miniseq.recipes.algorithm import update_lengths
 from miniseq.utils import to_tensor
 
@@ -19,7 +18,7 @@ def update_scores(
 ) -> None:
     assert total_score.numel() == 1
 
-    metric_bag.get(Mean, "total_score").update(
+    metric_bag.get(metrics.Mean, "total_score").update(
         total_score.detach() / num_answers, weight=num_answers
     )
 

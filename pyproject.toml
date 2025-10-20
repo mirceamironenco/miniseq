@@ -34,8 +34,6 @@ dependencies = [
 
 [project.optional-dependencies]
 flash-attn   = ["flash-attn>=2.8.3; sys_platform == 'linux' and platform_machine == 'x86_64'"]
-flash-infer  = ["flashinfer-python; sys_platform == 'linux' and platform_machine == 'x86_64'"]
-
 
 [project.scripts]
 miniseq_recipe = "miniseq.entry:main"

@@ -1,5 +1,4 @@
 from miniseq.training._ac import apply_ac, maybe_unwrap_ac_checkpoint
-from miniseq.training._checkpoint import CheckpointManager, create_checkpoint_manager
 from miniseq.training._device_memory import (
     DeviceMemoryTracker,
     create_memory_tracker,
@@ -24,3 +23,14 @@ from miniseq.training._writer import (
     TensorBoardWriter,
     WandbWriter,
 )
+
+# isort: split
+
+from typing import TYPE_CHECKING
+
+from miniseq._lazy import soft_lazy_import
+
+if TYPE_CHECKING:
+    from miniseq.training import data_parallel
+else:
+    data_parallel = soft_lazy_import("miniseq.training.data_parallel")

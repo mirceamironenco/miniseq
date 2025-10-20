@@ -14,7 +14,6 @@ from miniseq.transformer import (
     TransformerDecoder,
     TransformerDecoderLayer,
     TransformerDecoderModel,
-    build_cce_nll_forward,
 )
 from miniseq.utils import default_dtype
 
@@ -54,6 +53,8 @@ class TransformerBuilder:
         )
 
         if self.config.cut_cross_entropy:
+            from miniseq.kernels._cce import build_cce_nll_forward
+
             # Patch the loss function if using custom loss.
             model.loss = MethodType(build_cce_nll_forward(), model)
 

@@ -5,7 +5,6 @@ import torch
 import torch.nn as nn
 
 from miniseq import configs as cfg
-from miniseq import register_models
 from miniseq.data import PreferenceBatch, load_hf_pretrained_tokenzier, log_tokenizer
 from miniseq.logging import get_logger, log_config, setup_logging
 from miniseq.machine import Machine, setup_default_machine
@@ -16,6 +15,7 @@ from miniseq.models import (
     load_model_checkpoint,
     log_model,
 )
+from miniseq.runtime import register_models
 from miniseq.trainer import Trainer
 from miniseq.training import set_seed
 

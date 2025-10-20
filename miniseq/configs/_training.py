@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -8,7 +10,6 @@ from typing_extensions import override
 
 from miniseq.builder_config import BuilderConfig, config_as_dict
 from miniseq.machine import Machine
-from miniseq.models import model_is_registered
 from miniseq.training import TorchProfiler, WandbWriter
 
 

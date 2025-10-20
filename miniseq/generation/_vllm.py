@@ -13,7 +13,6 @@ import torch.nn as nn
 from torch.distributed.tensor import DTensor
 from typing_extensions import override
 
-import miniseq.training.data_parallel as data_parallel
 from miniseq.generation._base import Generator
 from miniseq.logging import get_logger
 from miniseq.machine import Machine
@@ -24,14 +23,19 @@ from miniseq.models import (
     get_to_hf_checkpoint_converter,
     merged_named_parameters,
 )
-from miniseq.training import StopWatch, manual_seed, maybe_unwrap_ac_checkpoint
+from miniseq.training import (
+    StopWatch,
+    data_parallel,
+    manual_seed,
+    maybe_unwrap_ac_checkpoint,
+)
 
 # Silence vLLM import logging.
 logging.disable(logging.WARNING)
 
 # Lazy import since vllm has significant import time.
 if TYPE_CHECKING:
-    from vllm import LLM, LLMEngine, RequestOutput, SamplingParams
+    from vllm import LLM, LLMEngine, RequestOutput, SamplingParams, TokensPrompt
 
 logging.disable(logging.NOTSET)
 
@@ -49,21 +53,10 @@ class VLLMEngineConfig:
     enforce_eager: bool = False
     """Disable CUDA graph & use eager mode."""
 
-    max_seq_len_to_capture: int = 8192
-    """Max seqlen covered by CUDA graphs."""
-
     max_model_len: int = field(init=False, default=8192)
-
-    def __post_init__(self) -> None:
-        if self.max_seq_len_to_capture > self.max_model_len:
-            self.max_seq_len_to_capture = self.max_model_len
 
     def set_model_len(self, max_model_len: int) -> None:
         self.max_model_len = max_model_len
-
-        self.max_seq_len_to_capture = min(
-            self.max_seq_len_to_capture, self.max_model_len
-        )
 
 
 @dataclass(kw_only=True)
@@ -261,7 +254,9 @@ class VLLMGenerator(Generator):
                 sampling_params = self._sampling_params
 
             # list[TokensPrompt]
-            token_prompts = [{"prompt_token_ids": tokens} for tokens in all_prompts]
+            token_prompts: list[TokensPrompt] = [
+                {"prompt_token_ids": tokens} for tokens in all_prompts
+            ]
 
             self._machine.barrier()
 

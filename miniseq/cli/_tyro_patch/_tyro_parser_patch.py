@@ -427,6 +427,7 @@ def run_default_cli(
     f: type[OutT] | Callable[..., OutT],
     *,
     console_outputs: bool = True,
+    prog: str | None = None,
     args: None | Sequence[str] = None,
 ) -> OutT: ...
 
@@ -437,6 +438,7 @@ def run_default_cli(
     *,
     console_outputs: bool = True,
     return_unknown_args: Literal[True],
+    prog: str | None = None,
     args: None | Sequence[str] = None,
 ) -> tuple[OutT, list[str]]: ...
 
@@ -446,10 +448,12 @@ def run_default_cli(
     *,
     console_outputs: bool = True,
     return_unknown_args: bool = False,
+    prog: str | None = None,
     args: None | Sequence[str] = None,
 ) -> OutT | tuple[OutT, list[str]]:
     return cli(
         f,
+        prog=prog,
         args=args,
         use_underscores=True,
         console_outputs=console_outputs,

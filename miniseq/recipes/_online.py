@@ -6,14 +6,13 @@ from dataclasses import dataclass, field
 import torch
 
 from miniseq import configs as cfg
-from miniseq import register_models
 from miniseq.data import (
     PromptBatch,
     TrajectoryBatch,
     load_hf_pretrained_tokenzier,
     log_tokenizer,
 )
-from miniseq.datasets import MathVerifier
+from miniseq.datasets.math_verify import MathVerifier
 from miniseq.logging import get_logger, log_config, setup_logging
 from miniseq.machine import Machine, setup_default_machine
 from miniseq.models import (
@@ -24,6 +23,7 @@ from miniseq.models import (
     log_model,
 )
 from miniseq.recipes.algorithm import GeneratorEvalUnit
+from miniseq.runtime import register_models
 from miniseq.trainer import Trainer
 from miniseq.training import set_seed
 from miniseq.transformer import TransformerDecoderModel
@@ -96,7 +96,7 @@ class OnlineRecipeConfig(cfg.TrainRecipeConfig):
         split="train",
         test_split="test",
         apply_chat_template=True,
-        verifiers=MathVerifier(),
+        verifier_factory=lambda: MathVerifier(),
     )
 
     valid_data: cfg.data.RegisteredDatasetConfig | None = None

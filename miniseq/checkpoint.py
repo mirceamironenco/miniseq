@@ -14,17 +14,50 @@ from collections.abc import Mapping
 from pathlib import Path
 from pickle import PickleError
 from shutil import rmtree
-from typing import Any, TypeAlias
+from typing import Any, Protocol, TypeAlias, runtime_checkable
 
 import torch
 import torch.nn as nn
-from torch.distributed.checkpoint.stateful import Stateful
 
-import miniseq.training.data_parallel as data_parallel
 from miniseq.logging import get_logger
 from miniseq.machine import Machine
+from miniseq.training import data_parallel
 
 _log = get_logger()
+
+
+@runtime_checkable
+class Stateful(Protocol):
+    """
+    Stateful protocol for objects that can be checkpointed and restored.
+    """
+
+    def state_dict(self) -> dict[str, Any]:
+        """
+        Objects should return their state_dict representation as a dictionary.
+        The output of this function will be checkpointed, and later restored in
+        `load_state_dict()`.
+
+        .. warning::
+            Because of the inplace nature of restoring a checkpoint, this function
+            is also called during `torch.distributed.checkpoint.load`.
+
+
+        Returns:
+            Dict: The objects state dict
+        """
+
+        ...
+
+    def load_state_dict(self, state_dict: dict[str, Any]) -> None:
+        """
+        Restore the object's state from the provided state_dict.
+
+        Args:
+            state_dict: The state dict to restore from
+        """
+
+        ...
 
 
 def torch_tensor_dump(data: Mapping[str, Any], path: Path) -> None:

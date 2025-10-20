@@ -5,6 +5,7 @@ set +x
 
 # --- Allow overrides and both 'torchrun'/'python' as launchers. ---
 # Set RUNNER_CMD and SCRIPT_ARGS
+RUNNER_CMD=("uv" "run")
 source "parse.sh"
 parse_arguments "$@"
 

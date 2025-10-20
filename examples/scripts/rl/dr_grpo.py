@@ -6,7 +6,7 @@ from typing_extensions import TypedDict
 
 from miniseq import cli, recipes
 from miniseq import configs as cfg
-from miniseq.datasets import MathVerifier
+from miniseq.datasets.math_verify import MathVerifier
 from miniseq.recipes.algorithm.online import GRPOConfig
 from miniseq.utils import on_local_rank_zero
 
