@@ -1,7 +1,7 @@
 ## Supervised Fine-Tuning
 
 ```bash
-python gsm8k.py --model.name=qwen2.5-1.5b-instruct --model.flash_attention2=True
+uv run gsm8k.py --model.name=qwen2.5-1.5b-instruct --model.flash_attention2=True
 ```
 
 The above command will fine-tune `qwen2.5-1.5b-isntruct` on the [gsm8k dataset](https://huggingface.co/datasets/openai/gsm8k), using a prompt format similar to the one used for RL training.
