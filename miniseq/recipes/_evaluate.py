@@ -35,7 +35,7 @@ class EvalRecipeConfig(cfg.EvalRecipeConfig):
         default_factory=lambda: cfg.generation.VLLMConfig(
             engine=VLLMEngineConfig(gpu_memory_utilization=0.7),
             sample=VLLMSamplingConfig(
-                temperature=0.0, top_p=1.0, top_k=-1, max_tokens=3600
+                temperature=0.0, top_p=1.0, top_k=-1, max_tokens=3800
             ),
         )
     )

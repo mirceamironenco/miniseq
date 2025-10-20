@@ -121,6 +121,11 @@ def build_from_registry(
     assistant_message: str | None = None,
     prompt_transform: Callable[[str], str] | None = None,
 ) -> HFPromptDataset:
+    if name not in HF_PROMPT_DATASET_REGISTRY:
+        raise ValueError(
+            f"Dataset with name {name} not registered. Use `register_prompt_dataset`."
+        )
+
     spec: HFPromptDatasetSpec = HF_PROMPT_DATASET_REGISTRY[name]
 
     # Allowed overrides which can be model-dependent.
