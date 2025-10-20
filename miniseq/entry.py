@@ -14,10 +14,13 @@ from miniseq.logging import get_console
 def _online():
     """Run standard online training recipe."""
 
+    from miniseq.configs import save_config
     from miniseq.recipes import OnlineRecipeConfig, create_online_trainer
 
     def online(config: Annotated[OnlineRecipeConfig, tyro.conf.arg(name="")]) -> None:
         trainer = create_online_trainer(config)
+
+        save_config(config.cache_dir, config, name="rl_config")
 
         trainer.run()
 
@@ -27,12 +30,15 @@ def _online():
 def _preference():
     """Run standard preference training recipe."""
 
+    from miniseq.configs import save_config
     from miniseq.recipes import PreferenceRecipeConfig, create_preference_trainer
 
     def preference(
         config: Annotated[PreferenceRecipeConfig, tyro.conf.arg(name="")],
     ) -> None:
         trainer = create_preference_trainer(config)
+
+        save_config(config.cache_dir, config, name="preference_config")
 
         trainer.run()
 
