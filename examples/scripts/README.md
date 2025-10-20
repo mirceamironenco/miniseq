@@ -83,7 +83,7 @@ The standard supervised fine-tuning recipe exposes the following options (seen b
 <summary>Fine-tuning recipe options</summary>
 
 ```
-usage: miniseq_recipe optimizer:adamw lr_scheduler:cosine_decay dp:fsdp2 
+usage: miniseq_recipe tune optimizer:adamw lr_scheduler:cosine_decay dp:fsdp2 
 wandb:None 
 lora:None profiler:None validate:None
        [-h] [VALIDATE:NONE OPTIONS]

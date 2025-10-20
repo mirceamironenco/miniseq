@@ -110,11 +110,16 @@ def main() -> None:
     args = list(sys.argv[1:])
 
     if args and args[0] in runnable_recipes:
-        cli_item = runnable_recipes[args[0]]()
+        recipe_name = args[0]
 
-        args = args[1:]
+        cli_item = runnable_recipes[recipe_name]()
 
-        return cli.run_default_cli(cli_item, console_outputs=local_rank == 0, args=args)
+        return cli.run_default_cli(
+            cli_item,
+            prog=f"miniseq_recipe {recipe_name}",
+            console_outputs=local_rank == 0,
+            args=args[1:],
+        )
 
     tyro.extras.subcommand_cli_from_dict(
         all_recipes,
