@@ -15,7 +15,7 @@ dependencies = [
     "torcheval~=0.0.6",
     "huggingface_hub~=0.35",
     "datasets>=4.0.0",
-    "tyro>=0.9.34",
+    "tyro==0.9.35",
     "rich>=14.0.0",
     "typing-extensions>=4.14.0",
     "safetensors~=0.6",
