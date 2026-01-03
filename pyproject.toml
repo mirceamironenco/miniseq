@@ -22,14 +22,14 @@ dependencies = [
     "transformers~=4.56.0",
     "pylatexenc", # math task eval
     "math-verify[antlr4_13_2]",
-    "torchao==0.13.0",
+    "torchao==0.14.1",
 
-    "vllm==0.11.0; sys_platform != 'darwin' or platform_machine != 'x86_64'",
+    "vllm==0.13.0; sys_platform != 'darwin' or platform_machine != 'x86_64'",
 
     # Torch rules:
     # - Skip on macOS Intel (can still be used via conda-forge)
-    # - Allow 2.8.x so Linux/Windows can pick 2.8.0+cu128 and macOS can pick 2.8.0
-    "torch>=2.8,<2.9; sys_platform != 'darwin' or platform_machine != 'x86_64'",
+    # - Allow 2.9.x so Linux/Windows can pick 2.9.0+cu128 and macOS can pick 2.9.0
+    "torch>=2.9,<2.10; sys_platform != 'darwin' or platform_machine != 'x86_64'",
 ]
 
 [project.optional-dependencies]
