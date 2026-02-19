@@ -30,7 +30,7 @@ def test_all_sum_local_machine():
 
 @patch.dict(os.environ, {"WORLD_SIZE": "1", "RANK": "0", "LOCAL_RANK": "0"})
 def test_setup_default_machine_local():
-    machine = setup_default_machine()
+    machine = setup_default_machine(device=torch.device("cpu"))
     assert isinstance(machine, LocalMachine)
     assert machine.device.type == "cpu"  # Default device without CUDA
     assert machine.rank == 0
