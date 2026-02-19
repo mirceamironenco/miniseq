@@ -11,25 +11,14 @@ from __future__ import annotations
 
 import logging
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, Generic, TypeVar
+from typing import Any, TypeVar
 
 import torch
 
-from miniseq._lazy import soft_lazy_import
 from miniseq.machine import Machine
-
-if TYPE_CHECKING:
-    import torcheval.metrics as metrics
-    import torcheval.metrics.toolkit as toolkit
-    from torcheval.metrics import Metric as _Metric
-else:
-    metrics = soft_lazy_import("torcheval.metrics")
-    toolkit = soft_lazy_import("torcheval.metrics.toolkit")
-
-    TComputeReturn = TypeVar("TComputeReturn")
-
-    class _Metric(Generic[TComputeReturn]): ...
-
+from miniseq.metrics import Metric as _Metric
+from miniseq.metrics import _toolkit as toolkit
+import miniseq.metrics as metrics
 
 MetricT = TypeVar("MetricT", bound=_Metric[Any])
 

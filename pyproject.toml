@@ -12,7 +12,6 @@ license = { file = "LICENSE" }
 dependencies = [
     "torchdata @ git+https://github.com/pytorch/data.git@92950795e0790eb74df995daf40b658e85fd2c9f",
     "cut-cross-entropy @ git+https://github.com/apple/ml-cross-entropy.git@b7a02791b234e187b524fb1dba6a812d521b203a",
-    "torcheval~=0.0.6",
     "huggingface_hub~=0.35",
     "datasets>=4.0.0",
     "tyro==0.9.35",
@@ -36,6 +35,7 @@ dependencies = [
 
 [project.optional-dependencies]
 flash-attn   = ["flash-attn>=2.8.3; sys_platform == 'linux' and platform_machine == 'x86_64'"]
+dev = ["pytest"]
 
 [project.scripts]
 miniseq_recipe = "miniseq.entry:main"
