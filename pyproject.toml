@@ -22,7 +22,7 @@ dependencies = [
     "transformers~=4.56.0",
     "pylatexenc", # math task eval
     "math-verify[antlr4_13_2]",
-    "torchao==0.14.1",
+    "torchao==0.16.0",
 
     "vllm; sys_platform == 'linux' and platform_machine == 'x86_64'",
 
