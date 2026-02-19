@@ -24,12 +24,12 @@ dependencies = [
     "math-verify[antlr4_13_2]",
     "torchao==0.14.1",
 
-    "vllm==0.13.0; sys_platform != 'darwin' or platform_machine != 'x86_64'",
+    "vllm; sys_platform == 'linux' and platform_machine == 'x86_64'",
 
     # Torch rules:
     # - Skip on macOS Intel (can still be used via conda-forge)
-    # - Allow 2.9.x so Linux/Windows can pick 2.9.0+cu128 and macOS can pick 2.9.0
-    "torch>=2.9,<2.10; sys_platform != 'darwin' or platform_machine != 'x86_64'",
+    # - Allow 2.10.x so Linux/Windows can pick 2.10.0+cu130 and macOS can pick 2.10.0
+    "torch>=2.10,<2.11; sys_platform != 'darwin' or platform_machine != 'x86_64'",
 ]
 
 [project.optional-dependencies]
@@ -50,14 +50,13 @@ environments = [
 # Use CUDA index only on Linux/Windows; macOS falls back to PyPI.
 [tool.uv.sources]
 torch = [
-  { index = "pytorch-cu128", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+  { index = "pytorch-cu130", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
   { index = "pytorch-cpu",   marker = "sys_platform == 'darwin'" },
 ]
-
-
+vllm = { url = "https://github.com/vllm-project/vllm/releases/download/v0.16.0/vllm-0.16.0+cu130-cp38-abi3-manylinux_2_35_x86_64.whl" }
 [[tool.uv.index]]
-name = "pytorch-cu128"
-url = "https://download.pytorch.org/whl/cu128"
+name = "pytorch-cu130"
+url = "https://download.pytorch.org/whl/cu130"
 explicit = true
 
 [[tool.uv.index]]
