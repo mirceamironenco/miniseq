@@ -36,6 +36,11 @@ from torch.profiler import record_function
 from torch.utils.data import DataLoader
 from typing_extensions import TypeVar, override
 
+try:
+    from torch.distributed.tensor import DTensor
+except ImportError:
+    DTensor = None  # type: ignore[assignment]
+
 from miniseq.builder_config import DataclassInstance
 from miniseq.checkpoint import (
     CheckpointManager,
@@ -781,6 +786,9 @@ class Trainer(Generic[BatchT, DataBatchT]):
             self._run_optimizer_step()
 
         if grad_norm is not None:
+            if DTensor is not None and isinstance(grad_norm, DTensor):
+                grad_norm = grad_norm.full_tensor()
+
             self._metric_bag.get(metrics.Mean, "grad_norm").update(grad_norm)
 
         self._num_effective_batches += 1
