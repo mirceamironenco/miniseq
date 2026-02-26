@@ -105,7 +105,7 @@ class OnlineRecipeConfig(cfg.TrainRecipeConfig):
         name="qwen2.5-math-1.5b-instruct", use_cce=True, dtype=torch.bfloat16
     )
 
-    optimizer: cfg.OptimizerConfig = cfg.optim.AdamWConfig(lr=1e-6, weight_decay=0.01)
+    optimizer: cfg.OptimizerConfig = cfg.optim.AdamWConfig(lr=1e-5, weight_decay=0.01)
 
     lr_scheduler: cfg.LRSchedulerConfig = cfg.scheduler.LinearWarmupCosineConfig(
         warmup_steps=50

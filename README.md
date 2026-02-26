@@ -77,11 +77,9 @@ usage: miniseq_recipe [-h] {tune,preference,rl,evaluate,model_registry}
 
 2. Run e.g. `uv run miniseq_recipe tune --help` to see the default argument choices.
 
-3. Run `uv run miniseq_recipe tune --choices` to see the multiple-choice arguments.
+3. Running `uv run miniseq_recipe tune` will fine-tune [Qwen 2.5-1.5b-instruct](https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct) on the [alpaca cleaned](https://huggingface.co/datasets/yahma/alpaca-cleaned) dataset. 
 
-4. Running `uv run miniseq_recipe tune` will fine-tune [Qwen 2.5-1.5b-instruct](https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct) on the [alpaca cleaned](https://huggingface.co/datasets/yahma/alpaca-cleaned) dataset. 
-
-5. Multi-GPU training is supported via `torchrun`  e.g.:
+4. Multi-GPU training is supported via `torchrun`  e.g.:
 ```bash
 uv run torchrun --nproc-per-node=gpu --no-python miniseq_recipe tune
 ```

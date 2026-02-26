@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "miniseq"
-version = "0.1.0"
+version = "0.2.0"
 readme = "README.md"
 requires-python = ">=3.11"
 authors = [{name = "mirceamironenco", email = "mircea.mironenco@gmail.com"}]
@@ -12,28 +12,29 @@ license = { file = "LICENSE" }
 dependencies = [
     "torchdata @ git+https://github.com/pytorch/data.git@92950795e0790eb74df995daf40b658e85fd2c9f",
     "cut-cross-entropy @ git+https://github.com/apple/ml-cross-entropy.git@b7a02791b234e187b524fb1dba6a812d521b203a",
-    "torcheval~=0.0.6",
-    "huggingface_hub~=0.35",
+    "huggingface_hub~=0.36",
     "datasets>=4.0.0",
-    "tyro==0.9.35",
+    "tyro>=1.0.8",
     "rich>=14.0.0",
     "typing-extensions>=4.14.0",
-    "safetensors~=0.6",
-    "transformers~=4.56.0",
+    "safetensors~=0.7",
+    "transformers~=4.57.6",
     "pylatexenc", # math task eval
     "math-verify[antlr4_13_2]",
-    "torchao==0.13.0",
+    "torchao==0.16.0",
 
-    "vllm==0.11.0; sys_platform != 'darwin' or platform_machine != 'x86_64'",
+    "vllm==0.16.0; sys_platform != 'darwin' or platform_machine != 'x86_64'",
 
     # Torch rules:
     # - Skip on macOS Intel (can still be used via conda-forge)
-    # - Allow 2.8.x so Linux/Windows can pick 2.8.0+cu128 and macOS can pick 2.8.0
-    "torch>=2.8,<2.9; sys_platform != 'darwin' or platform_machine != 'x86_64'",
+    # - Allow 2.x.x so Linux/Windows can pick 2.x.x+cu128 and macOS x86 can pick 2.x.x from conda
+    "torch>=2.9.1,<2.10; sys_platform != 'darwin' or platform_machine != 'x86_64'",
 ]
 
 [project.optional-dependencies]
 flash-attn   = ["flash-attn>=2.8.3; sys_platform == 'linux' and platform_machine == 'x86_64'"]
+icl = ["flash-linear-attention; sys_platform == 'linux' and platform_machine == 'x86_64'"]
+dev = ["pytest"]
 
 [project.scripts]
 miniseq_recipe = "miniseq.entry:main"
@@ -53,7 +54,6 @@ torch = [
   { index = "pytorch-cu128", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
   { index = "pytorch-cpu",   marker = "sys_platform == 'darwin'" },
 ]
-
 
 [[tool.uv.index]]
 name = "pytorch-cu128"
