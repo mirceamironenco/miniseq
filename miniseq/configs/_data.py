@@ -222,8 +222,10 @@ class PromptDatasetConfig(BuilderConfig[PromptDataset], Generic[MapItemT]):
     prompt_transform: Callable[[str], str] | None = None
     apply_chat_template: bool = True
 
-    verifiers: Verifier | list[Verifier] | None = None
-    verifier_factory: Callable[..., Verifier | list[Verifier]] | None = None
+    verifiers: Annotated[Verifier | list[Verifier] | None, tyro.conf.Suppress] = None
+    verifier_factory: Annotated[
+        Callable[..., Verifier | list[Verifier]] | None, tyro.conf.Suppress
+    ] = None
 
     @override
     def build(
