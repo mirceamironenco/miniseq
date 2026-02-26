@@ -10,7 +10,6 @@ from typing import (
     overload,
 )
 
-# import shtab
 import tyro
 import tyro.conf as conf
 from tyro.constructors import ConstructorRegistry
@@ -123,6 +122,7 @@ def run_default_cli(
         args=args,
         use_underscores=True,
         console_outputs=console_outputs,
+        compact_help=False,
         config=(
             conf.CascadeSubcommandArgs,
             conf.FlagConversionOff,

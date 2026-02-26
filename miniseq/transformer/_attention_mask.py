@@ -158,7 +158,9 @@ class AttentionMask:
         packed: bool = False,
         window_size: int | None = None,
     ) -> None:
-        self.compile_mask_builders()
+        # TODO: Investigate if cpu compile is bug in pytorch.
+        if torch.device(device).type == "cuda":
+            self.compile_mask_builders()
 
         self.mask_mod = mask_mod
         self._bsz = batch_size or 1

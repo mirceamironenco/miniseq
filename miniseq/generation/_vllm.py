@@ -146,7 +146,7 @@ class VLLMGenerator(Generator):
         os.environ["VLLM_ENABLE_V1_MULTIPROCESSING"] = "0"
 
         if config.tensor_parallel_size is None:
-            config.tensor_parallel_size = 1
+            config.tensor_parallel_size = self._machine.size
 
         # Lazy import since vllm has significant import time.
         from vllm import LLM, SamplingParams
