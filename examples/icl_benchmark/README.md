@@ -20,16 +20,15 @@ We implement a benchmark for evaluating the ICL capabilities of sequence modelin
 
 The following assumes `miniseq` is installed.
 
-First, install [fla](https://github.com/fla-org/flash-linear-attention), as we rely on it to implement certain sequence mixers (e.g. [Gated Linear Attention](https://arxiv.org/abs/2312.06635)):
+First, install the `icl` extra (which includes [fla](https://github.com/fla-org/flash-linear-attention)), as we rely on it to implement certain sequence mixers (e.g. [Gated Linear Attention](https://arxiv.org/abs/2312.06635)):
 
 ```sh
-uv pip install flash-linear-attention
+uv sync --extra icl
 ```
-(or `pip install flash-linear-attention` in the corresponding environment)
 
 For the following, if not using `uv` replace `uv run` with `python`.
 
-Run `uv run recipe.py --choices` to see the standard CLI options and understand what **tasks**, **sequence mixers** and **state mixers** are available:
+Run `uv run recipe.py --help` to see the standard CLI options and understand what **tasks**, **sequence mixers** and **state mixers** are available:
 
 ```
 ╭─ task choices ─────────────────────────────────────────────────────────────╮
@@ -59,13 +58,11 @@ Run `uv run recipe.py --choices` to see the standard CLI options and understand 
 ╰────────────────────────────────────────────────────────────────────────────╯
 ```
 
-These options need to be specified before any other overrides, and once specified allow for the customization of individual layer and task parameters. The following is equivalent to running the default command (`uv run recipe.py --help`): 
+These options need to be specified before any other overrides, and once specified allow for the customization of individual layer and task parameters. 
 
-```sh
-uv run recipe.py task:mqar model.seq_mixer:attention model.state_mixer:mlp --help
-```
+Running `uv run recipe.py wandb:None` will train a small 2-layer standard transformer (with multi-head attention and MLPs) on the [MQAR](https://arxiv.org/abs/2312.04927) task, which is standard for evaluation ICL capabilities. 
 
-Running the above without the `--help` option will train a small 2-layer standard transformer (with multi-head attention and MLPs) on the [MQAR](https://arxiv.org/abs/2312.04927) task, which is standard for evaluation ICL capabilities. We also turn off wandb logging (controlled by `wandb:on` and `wandb:None`) for a dry run:
+We can also turn off wandb logging (controlled by `wandb:on` and `wandb:None`) for a dry run:
 
 
 ```sh

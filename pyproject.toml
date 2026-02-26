@@ -12,13 +12,13 @@ license = { file = "LICENSE" }
 dependencies = [
     "torchdata @ git+https://github.com/pytorch/data.git@92950795e0790eb74df995daf40b658e85fd2c9f",
     "cut-cross-entropy @ git+https://github.com/apple/ml-cross-entropy.git@b7a02791b234e187b524fb1dba6a812d521b203a",
-    "huggingface_hub~=0.35",
+    "huggingface_hub~=0.36",
     "datasets>=4.0.0",
     "tyro>=1.0.8",
     "rich>=14.0.0",
     "typing-extensions>=4.14.0",
     "safetensors~=0.7",
-    "transformers~=4.57.3",
+    "transformers~=4.57.6",
     "pylatexenc", # math task eval
     "math-verify[antlr4_13_2]",
     "torchao==0.16.0",
@@ -33,6 +33,7 @@ dependencies = [
 
 [project.optional-dependencies]
 flash-attn   = ["flash-attn>=2.8.3; sys_platform == 'linux' and platform_machine == 'x86_64'"]
+icl = ["flash-linear-attention; sys_platform == 'linux' and platform_machine == 'x86_64'"]
 dev = ["pytest"]
 
 [project.scripts]
